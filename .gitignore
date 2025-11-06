@@ -4,5 +4,6 @@ __pycache__/
 *.pyc
 .ipynb_checkpoints/
 examples/outputs/*
+!examples/outputs/*.ase
 .DS_Store
 .vscode/settings.json
