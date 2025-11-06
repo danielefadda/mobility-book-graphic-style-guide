@@ -54,6 +54,9 @@ Documentation = "https://github.com/danielefadda/mobility-book-graphic-style-gui
 [tool.setuptools]
 packages = ["mobility_book_style"]
 
+[tool.setuptools.package-data]
+mobility_book_style = ["fonts/*.ttf", "fonts/*.txt"]
+
 [tool.black]
 line-length = 100
 target-version = ['py38', 'py39', 'py310', 'py311']

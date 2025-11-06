@@ -3,6 +3,9 @@ include LICENSE
 include pyproject.toml
 include requirements.txt
 
+# Include fonts
+recursive-include mobility_book_style/fonts *.ttf *.otf *.txt
+
 # Include examples but not outputs
 recursive-include examples *.ipynb *.py
 recursive-exclude examples/outputs *

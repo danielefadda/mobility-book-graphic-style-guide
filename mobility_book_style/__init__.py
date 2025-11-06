@@ -29,10 +29,15 @@ Altair
 Note:
     Lo stile definito in questa libreria NON è modificabile dall'utente.
     I design tokens e i colori sono immutabili per garantire coerenza visiva.
+    
+    I font Inter sono registrati automaticamente all'import del pacchetto.
 """
 
 __version__ = "0.1.0"
 __author__ = "Daniele Fadda"
+
+# Registra i font Inter in Matplotlib (auto-eseguito all'import)
+from . import _fonts  # noqa: F401
 
 # API pubblica principale
 from .matplotlib import apply_matplotlib_theme, style_table

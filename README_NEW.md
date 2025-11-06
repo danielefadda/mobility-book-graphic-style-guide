@@ -8,7 +8,7 @@ Una libreria Python per applicare lo stile grafico standardizzato di **Mobility 
 ## 🎯 Caratteristiche
 
 - **Stile immutabile**: Design tokens centralizzati e non modificabili per garantire coerenza visiva
-- **Font Inter**: Tipografia professionale con fallback automatici
+- **Font Inter inclusi**: Font variabili professionali registrati automaticamente (nessun warning!)
 - **Palette colori ottimizzata**: Colori accessibili e distinguibili
 - **Facile da usare**: 2-3 funzioni per applicare lo stile completo
 - **Dipendenze opzionali**: Installa solo ciò di cui hai bisogno (Matplotlib, Altair o entrambi)
