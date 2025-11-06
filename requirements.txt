@@ -1,0 +1,7 @@
+altair>=5.4
+matplotlib>=3.9
+pandas>=2.2
+numpy>=1.26
+vega_datasets>=0.9
+jupyter>=1.0
+black>=24.0
