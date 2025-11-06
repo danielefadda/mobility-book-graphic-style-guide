@@ -156,6 +156,37 @@ Abilita il tema Altair di Mobility Book. Il tema rimane attivo per tutta la sess
 
 Ripristina il tema Altair di default.
 
+### `export_ase(output_path, *, include_aliases=True)`
+
+Esporta la palette colori in formato Adobe Swatch Exchange (.ase).
+
+**Parametri:**
+- `output_path`: Percorso del file .ase da creare (str o Path)
+- `include_aliases`: Include anche i colori primitivi (default: True)
+
+**Esempio:**
+```python
+import mobility_book_style as mbs
+mbs.export_ase("my_colors.ase")
+```
+
+**Compatibile con:** Adobe Photoshop, Illustrator, InDesign
+
+### `export_colors_dict()`
+
+Esporta tutti i colori come dizionario Python.
+
+**Returns:** Dizionario con chiavi:
+- `aliases`: Colori primitivi
+- `tokens`: Colori semantici  
+- `category10`: Palette categoriale
+
+**Esempio:**
+```python
+colors = mbs.export_colors_dict()
+print(colors['tokens']['text'])  # '#000000'
+```
+
 ## 🎨 Design System
 
 Il design system si basa su tre livelli:
