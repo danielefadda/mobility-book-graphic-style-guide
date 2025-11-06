@@ -17,6 +17,6 @@ ALIAS_COLORS = {
     "gray-10": "#F5F5F5",  # cell shading
     "white": "#FFFFFF",
     # Accenti (Urban-like)
-    "blue-60": "#1696D2",  # logo/link/accents
+    "blue-60": "#D21616",  # logo/link/accents
     "blue-80": "#0F5C81",
 }
