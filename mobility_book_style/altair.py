@@ -46,7 +46,7 @@ def _build_altair_theme():
         "config": {
             "background": TOKENS["color"]["background"],
             "font": TOKENS["font"]["base_stack"],
-            "mark": {"color": TOKENS["color"]["text"]},
+            "mark": {"color": TOKENS["color"]["accent"]},
             "title": {
                 "color": TOKENS["color"]["text"],
                 "anchor": "start",
