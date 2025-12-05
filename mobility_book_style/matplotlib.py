@@ -55,27 +55,68 @@ def apply_matplotlib_theme():
     """
     mpl.rcParams.update(
         {
+            # Colori di sfondo
             "figure.facecolor": TOKENS["color"]["background"],
             "axes.facecolor": TOKENS["color"]["background"],
-            "axes.edgecolor": TOKENS["color"]["domain"],
-            "axes.labelcolor": TOKENS["color"]["text"],
-            "text.color": TOKENS["color"]["text"],
-            "axes.grid": True,
-            "grid.color": TOKENS["color"]["grid"],
-            "grid.alpha": 0.7,
-            "axes.titlesize": TOKENS_PT["chart"]["title_pt"],
-            "axes.labelsize": TOKENS_PT["chart"]["label_pt"],
-            "xtick.labelsize": TOKENS_PT["chart"]["tick_pt"],
-            "ytick.labelsize": TOKENS_PT["chart"]["tick_pt"],
-            "legend.fontsize": TOKENS_PT["chart"]["legend_pt"],
-            "lines.linewidth": TOKENS["chart"]["line_width"],
-            "font.family": "sans-serif",
-            "font.sans-serif": [f.strip() for f in TOKENS["font"]["base_stack"].split(",")],
-            "axes.prop_cycle": mpl.cycler(color=TOKENS["chart"]["category10"]),
-            "axes.spines.top": False,
-            "axes.spines.right": False,
             "savefig.facecolor": TOKENS["color"]["background"],
             "savefig.edgecolor": TOKENS["color"]["background"],
+            
+            # Font
+            "font.family": "sans-serif",
+            "font.sans-serif": [f.strip() for f in TOKENS["font"]["base_stack"].split(",")],
+            
+            # Titoli e etichette
+            "axes.titlesize": TOKENS_PT["chart"]["title_pt"],
+            "axes.titleweight": TOKENS["font"]["weight_bold"],
+            "axes.labelsize": TOKENS_PT["chart"]["label_pt"],
+            "axes.labelweight": TOKENS["font"]["weight_regular"],
+            "axes.labelcolor": TOKENS["color"]["text"],
+            
+            # Ticks
+            "xtick.labelsize": TOKENS_PT["chart"]["tick_pt"],
+            "ytick.labelsize": TOKENS_PT["chart"]["tick_pt"],
+            "xtick.color": TOKENS["color"]["text"],
+            "ytick.color": TOKENS["color"]["text"],
+            "xtick.major.width": 0.5,
+            "ytick.major.width": 0.5,
+            "xtick.major.size": 5,
+            "ytick.major.size": 5,
+            
+            # Assi
+            "axes.edgecolor": TOKENS["color"]["domain"],
+            "axes.linewidth": 0.5,
+            "axes.grid": True,
+            "axes.grid.axis": "y",
+            
+            # Griglia
+            "grid.color": TOKENS["color"]["grid"],
+            "grid.linestyle": "--",
+            "grid.linewidth": 0.25,
+            "grid.alpha": 1.0,
+            "axes.axisbelow": True,  # Griglia dietro i dati
+            
+            # Spines (bordi)
+            "axes.spines.top": False,
+            "axes.spines.right": False,
+            "axes.spines.left": True,
+            "axes.spines.bottom": True,
+            
+            # Colori del testo
+            "text.color": TOKENS["color"]["text"],
+            
+            # Linee
+            "lines.linewidth": TOKENS["chart"]["line_width"],
+            "lines.markersize": 6,
+            "lines.solid_capstyle": "round",
+            
+            # Ciclo colori (palette)
+            "axes.prop_cycle": mpl.cycler(color=TOKENS["chart"]["category10"]),
+            
+            # Legenda
+            "legend.fontsize": TOKENS_PT["chart"]["legend_pt"],
+            "legend.frameon": False,
+            "legend.fancybox": False,
+            "legend.edgecolor": "none",
         }
     )
 
