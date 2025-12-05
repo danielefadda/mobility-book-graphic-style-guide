@@ -1,7 +1,6 @@
 LICENSE
 MANIFEST.in
 README.md
-README_NEW.md
 pyproject.toml
 requirements.txt
 docs/README.md

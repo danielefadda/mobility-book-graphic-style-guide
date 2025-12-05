@@ -182,12 +182,12 @@
     "line_width": 2.0,
     "category10": [
       "{alias.teal-500}",
-      "{alias.grayviolet-700}",
-      "{alias.black-500}",
+      "{alias.burgundy-500}",
+      "{alias.purple-500}",
+      "{alias.olive-500}",
+      "{alias.gold-500}",
       "{alias.grayviolet-500}",
-      "{alias.darkviolet-800}",
-      "{alias.grayviolet-300}",
-      "{alias.darkviolet-600}",
+      "{alias.orange-500}",
       "{alias.paper-200}",
       "{alias.grayviolet-600}",
       "{alias.paper-100}"

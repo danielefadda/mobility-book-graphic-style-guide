@@ -35,128 +35,313 @@ Requires-Dist: pandas>=2.2; extra == "dev"
 Requires-Dist: numpy>=1.26; extra == "dev"
 Dynamic: license-file
 
-# Book Mobility Design System
+# 🎨 Mobility Book Graphic Style Guide
 
-This repository contains the design system for Book Mobility, including color palettes, design tokens, and builders for various visualization libraries such as Altair and Matplotlib. The goal is to ensure consistent styling across all visualizations related to Book Mobility.
+Una libreria Python per applicare lo stile grafico Mobility Book a visualizzazioni **Matplotlib** e **Altair**.
 
-## Repository Structure
+[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-```
-book_mobility_style/
-│
-├─ colors/
-│  ├─ alias_colors.py
-│  └─ preview_palette.ipynb
-├─ design_tokens/
-│  └─ design_tokens.py
-├─ builders/
-│  ├─ altair_builder.py
-│  ├─ matplotlib_builder.py
-│  ├─ css_builder.py              # (opzionale)
-│  └─ latex_builder.py            # ⚠️ Feature to be added
-├─ themes/
-│  ├─ altair_mobility_theme.py
-│  ├─ mpl_mobility_style.mplstyle
-│  └─ latex_mobility_style.tex    # ⚠️ Feature to be added
-├─ examples/
-│  ├─ altair_demo.ipynb
-│  ├─ matplotlib_demo.ipynb
-│  └─ latex_demo.tex              # ⚠️ Feature to be added
-├─ docs/
-│  ├─ index.md
-│  ├─ _config.yml
-│  ├─ assets/
-│  └─ sections/ (colors.md, tokens.md, builders.md, templates.md, examples.md)
-└─ README.md
+---
+
+## 📦 Installazione
+
+### Da Sviluppatore (Modalità Editable)
+
+```bash
+git clone https://github.com/danielefadda/mobility-book-graphic-style-guide.git
+cd mobility-book-graphic-style-guide
+pip install -e .
 ```
 
-## Workflow Overview
+### Con Dipendenze Complete
 
-The workflow for creating and using the Book Mobility design system can be summarized in three main steps:
-
-1. Define the primitive color palette (aliases)
-2. Create design tokens based on the primitive palette
-3. Build templates or libraries using the design tokens
-
-| PALETTE PRIMITIVA (alias) | DESIGN TOKENS (semantici) | TEMPLATE / LIBRERIA |
-| --- | --- | --- |
-| `alias_colors = {`<br>`  "blue-10": "#E6F2FF",`<br>`  "blue-20": "#CCE6FF",`<br>`  "blue-30": "#99CCFF",`<br>`  … }` | `tokens = {`<br>`  "color-accent-1": alias_colors["blue-60"],`<br>`  "color-accent-2": alias_colors["teal-50"],`<br>`  "color-text": alias_colors["gray-90"],`<br>`  … }` | `altair_theme = {`<br>`  "config": { … }`<br>`}`<br><br>`matplotlib_style = {`<br>`  "axes.facecolor": tokens["color-background"],`<br>`  "text.color": tokens["color-text"],`<br>`  … }` |
+```bash
+pip install -e ".[all]"
 ```
 
-## Eseguire gli esempi
+---
 
-Gli esempi si trovano in `examples/` e generano alcuni file di output in `examples/outputs/`:
+## 🚀 Uso Rapido
 
-- `mpl_test.png`: semplice grafico Matplotlib con il tema applicato
-- `altair_test.html`: grafico Altair esportato come HTML (usa un dataset di fallback se `vega_datasets` non è installato)
-
-Per eseguire rapidamente lo script di check dell'ambiente (`examples/check_env.py`), scegli una delle opzioni qui sotto (zsh su macOS):
-
-1) Esecuzione come modulo (consigliata)
-
-```zsh
-python -m examples.check_env
-```
-
-2) Impostare il PYTHONPATH al volo
-
-```zsh
-PYTHONPATH=. python examples/check_env.py
-```
-
-3) Installare il progetto in modalità editable (sviluppo)
-
-```zsh
-python -m pip install -e .
-python examples/check_env.py
-```
-
-Dipendenze: per usare il dataset di esempio di Altair (`vega_datasets`) installa i requirements:
-
-```zsh
-python -m pip install -r requirements.txt
-```
-
-## Uso rapido dei temi in uno script
-
-Matplotlib
+### Matplotlib
 
 ```python
-from builders.matplotlib_builder import apply_mpl_theme
+import mobility_book_style as mbs
 import matplotlib.pyplot as plt
 
-apply_mpl_theme()  # applica lo stile
-plt.plot([1, 2, 3], [3, 5, 2])
-plt.title("Esempio Matplotlib")
+# Applica il tema
+mbs.apply_matplotlib_theme()
+
+# Crea il tuo grafico
+fig, ax = plt.subplots()
+ax.plot([1, 2, 3, 4], [3, 5, 2, 6], label='Serie A')
+ax.set_title('Grafico Mobility Book')
+ax.set_xlabel('X')
+ax.set_ylabel('Y')
+ax.legend()
 plt.show()
 ```
 
-Altair
+### Altair
 
 ```python
+import mobility_book_style as mbs
 import altair as alt
-# Importa il tema per registrarlo (e abilitarlo automaticamente)
-from themes.altair_mobility_theme import mobility_theme  # noqa: F401
+import pandas as pd
 
-chart = alt.Chart(alt.Data(values=[{"x": "A", "y": 1}, {"x": "B", "y": 2}])) \
-	.mark_bar() \
-	.encode(x="x:N", y="y:Q")
+# Abilita il tema
+mbs.enable_altair_theme()
 
-# HTML
-chart.save("chart.html")
+# Crea il tuo grafico
+data = pd.DataFrame({
+    'x': ['A', 'B', 'C', 'D'],
+    'y': [5, 3, 6, 7]
+})
 
-# PNG (richiede una dipendenza opzionale)
-# Opzione consigliata: installa 'vl-convert-python' (in requirements.txt)
-# Altro fallback: 'altair_saver' con un backend disponibile (selenium o node)
-chart.save("chart.png")
+chart = alt.Chart(data).mark_bar().encode(
+    x='x:N',
+    y='y:Q'
+).properties(
+    title='Grafico Mobility Book',
+    width=600,
+    height=400
+)
+
+chart.save('chart.html')
 ```
 
-Se l'esportazione PNG fallisce, installa una delle dipendenze opzionali:
+### Tabelle Matplotlib
 
-```zsh
-# consigliato
-python -m pip install vl-convert-python
+```python
+import mobility_book_style as mbs
+import matplotlib.pyplot as plt
 
-# alternativa
-python -m pip install altair_saver
+mbs.apply_matplotlib_theme()
+
+fig, ax = plt.subplots(figsize=(8, 3))
+ax.axis('off')
+
+data = [
+    ['Città', 'Popolazione', 'Area (km²)'],
+    ['Milano', '1,396,059', '181.8'],
+    ['Roma', '2,860,009', '1,287.4'],
+]
+
+table = ax.table(cellText=data, loc='center', cellLoc='left')
+mbs.style_table(table)
+
+plt.savefig('table.png', dpi=144, bbox_inches='tight')
 ```
+
+### Esportare Colori per Adobe
+
+```python
+import mobility_book_style as mbs
+
+# Esporta palette come Adobe Swatch Exchange (.ase)
+mbs.export_ase('mobility_colors.ase')
+
+# Ottieni dizionario colori
+colors = mbs.export_colors_dict()
+print(f"Colori alias: {len(colors['aliases'])}")
+print(f"Colori semantici: {len(colors['tokens'])}")
+print(f"Category10: {len(colors['category10'])}")
+```
+
+---
+
+## 📚 Documentazione
+
+- **[UPDATING.md](UPDATING.md)** - Come modificare i design token e gli alias colori
+- **[examples/demo_new_api.ipynb](examples/demo_new_api.ipynb)** - Notebook completo con esempi
+
+---
+
+## 🏗️ Architettura
+
+```
+mobility_book_style/
+├── data/
+│   ├── alias.json              # Colori primitivi (HEX)
+│   └── design_tokens.json      # Token semantici
+├── _colors.py                  # Carica alias.json
+├── _tokens.py                  # Carica design_tokens.json
+├── matplotlib.py               # Builder per Matplotlib
+├── altair.py                   # Builder per Altair
+├── export.py                   # Export ASE e dizionari
+└── fonts/                      # Font Inter (TTF)
+```
+
+### Principio Fondamentale
+
+**I file JSON sono la source of truth**. Tutti i moduli Python leggono i token dai JSON al momento dell'import.
+
+```
+alias.json → ALIAS_COLORS → design_tokens.json → TOKENS → matplotlib/altair
+```
+
+---
+
+## 🎨 Design Tokens
+
+### Colori Primitivi (alias.json)
+
+```json
+{
+  "teal-500": "#348b96",
+  "burgundy-500": "#7b0029",
+  "black-500": "#262a33",
+  "white-500": "#ffffff"
+}
+```
+
+### Token Semantici (design_tokens.json)
+
+```json
+{
+  "semantic": {
+    "brand-primary": { "value": "{colors.teal.500}" },
+    "text-primary": { "value": "{colors.black.500}" },
+    "bg-default": { "value": "{colors.white.500}" }
+  }
+}
+```
+
+I riferimenti `{alias.xxx}` e `{colors.xxx}` vengono risolti automaticamente.
+
+---
+
+## 🔧 Modifica dei Token
+
+Vedi **[UPDATING.md](UPDATING.md)** per una guida completa.
+
+### Quick Start
+
+1. Modifica `mobility_book_style/data/alias.json` o `design_tokens.json`
+2. Valida il JSON: `python -m json.tool file.json > /dev/null`
+3. Riavvia il kernel Python (o riesegui lo script)
+4. I nuovi valori vengono caricati automaticamente ✅
+
+---
+
+## 🧪 Test
+
+```bash
+# Esegui tutti i test
+pytest tests/ -v
+
+# Test con coverage
+pytest tests/ --cov=mobility_book_style --cov-report=html
+```
+
+Tutti i test devono passare prima del commit.
+
+---
+
+## 📊 Esempi
+
+Esplora i notebook in `examples/`:
+
+- **check_env.py** - Script di verifica ambiente
+- **check_env.ipynb** - Notebook di verifica
+- **demo_new_api.ipynb** - Demo completa con tutti i casi d'uso
+
+---
+
+## 🛠️ Struttura dei File
+
+```
+.
+├── README.md                   # Questo file
+├── UPDATING.md                 # Guida per aggiornare i token
+├── LICENSE                     # Licenza MIT
+├── pyproject.toml              # Configurazione pacchetto
+├── requirements.txt            # Dipendenze
+│
+├── mobility_book_style/        # Libreria principale
+│   ├── __init__.py
+│   ├── _colors.py
+│   ├── _tokens.py
+│   ├── matplotlib.py
+│   ├── altair.py
+│   ├── export.py
+│   ├── data/
+│   │   ├── alias.json
+│   │   └── design_tokens.json
+│   └── fonts/
+│       └── Inter-*.ttf
+│
+├── examples/                   # Esempi e demo
+│   ├── check_env.py
+│   ├── check_env.ipynb
+│   └── demo_new_api.ipynb
+│
+├── tests/                      # Test suite
+│   ├── test_tokens.py
+│   ├── test_matplotlib.py
+│   ├── test_altair.py
+│   ├── test_export.py
+│   └── test_fonts.py
+│
+└── [deprecated folders]        # Cartelle con suffisso __D
+```
+
+---
+
+## 🎯 Funzionalità
+
+### ✅ Implementato
+
+- ✅ Design token system (JSON based)
+- ✅ 110+ colori alias (teal, burgundy, purple, olive, gold, etc.)
+- ✅ Token semantici (brand, text, background, etc.)
+- ✅ Builder Matplotlib (grafici, tabelle)
+- ✅ Builder Altair (grafici interattivi)
+- ✅ Font Inter (auto-registrato)
+- ✅ Export Adobe Swatch Exchange (.ase)
+- ✅ Export dizionario colori
+- ✅ Test suite completa (27 test)
+- ✅ Documentazione e esempi
+
+### ⚠️ Da Implementare
+
+- ⚠️ LaTeX builder (file .sty personalizzato)
+- ⚠️ CSS builder
+- ⚠️ Pubblicazione su PyPI
+
+---
+
+## 🤝 Contribuire
+
+1. Fai fork del repository
+2. Crea un branch per la tua feature: `git checkout -b feature/nome-feature`
+3. Modifica i file necessari
+4. Esegui i test: `pytest tests/`
+5. Commit: `git commit -am 'Add new feature'`
+6. Push: `git push origin feature/nome-feature`
+7. Apri una Pull Request
+
+---
+
+## 📝 Licenza
+
+Questo progetto è distribuito sotto licenza MIT. Vedi il file [LICENSE](LICENSE) per i dettagli.
+
+---
+
+## 👤 Autori
+
+**Mobility Book Team**
+
+- Repository: [mobility-book-graphic-style-guide](https://github.com/danielefadda/mobility-book-graphic-style-guide)
+
+---
+
+## 📧 Contatti
+
+Per domande o supporto, apri un issue su GitHub.
+
+---
+
+**Made with ❤️ for data visualization**
