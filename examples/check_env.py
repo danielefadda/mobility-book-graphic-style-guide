@@ -15,15 +15,15 @@ if str(ROOT) not in sys.path:
 
 # Import dei tuoi moduli (devono esistere nel progetto)
 from themes.altair_mobility_theme import mobility_theme  # registra/abilita il tema
-from builders.matplotlib_builder import apply_mpl_theme
-from design_tokens.design_tokens import TOKENS
+from mobility_book_style import apply_matplotlib_theme
+from mobility_book_style._tokens import TOKENS
 
 # Cartella output
 OUT = Path(__file__).parent / "outputs"
 OUT.mkdir(parents=True, exist_ok=True)
 
 # 2) Applica tema Matplotlib
-apply_mpl_theme()
+apply_matplotlib_theme()
 
 # 3) Test Matplotlib (line plot)
 plt.figure()

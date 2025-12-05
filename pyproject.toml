@@ -56,7 +56,11 @@ packages = ["mobility_book_style"]
 include-package-data = true
 
 [tool.setuptools.package-data]
-mobility_book_style = ["fonts/*.ttf", "fonts/*.txt"]
+mobility_book_style = [
+    "fonts/*.ttf",
+    "fonts/*.txt",
+    "data/*.json"
+]
 
 [tool.black]
 line-length = 100

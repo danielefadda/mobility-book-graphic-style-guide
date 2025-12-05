@@ -65,7 +65,7 @@ def test_altair_theme_config():
         assert "axis" in theme["config"]
 
         # Verifica che i colori siano stati impostati
-        assert theme["config"]["background"] == "#FFFFFF"
+        assert theme["config"]["background"].upper() == "#FFFFFF"
         assert "Inter" in theme["config"]["font"]
     else:
         pytest.skip("Altair non installato")

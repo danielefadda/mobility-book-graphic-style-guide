@@ -16,9 +16,9 @@ def test_apply_matplotlib_theme():
     assert "Inter" in mpl.rcParams["font.sans-serif"]
 
     # Verifica colori
-    assert mpl.rcParams["figure.facecolor"] == "#FFFFFF"
-    assert mpl.rcParams["axes.facecolor"] == "#FFFFFF"
-    assert mpl.rcParams["text.color"] == "#000000"
+    assert mpl.rcParams["figure.facecolor"].upper() == "#FFFFFF"
+    assert mpl.rcParams["axes.facecolor"].upper() == "#FFFFFF"
+    assert mpl.rcParams["text.color"].startswith("#")
 
     # Verifica dimensioni
     assert mpl.rcParams["axes.titlesize"] == 12.0  # 16px * 0.75

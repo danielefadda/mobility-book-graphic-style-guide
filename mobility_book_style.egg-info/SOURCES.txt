@@ -36,6 +36,8 @@ mobility_book_style.egg-info/SOURCES.txt
 mobility_book_style.egg-info/dependency_links.txt
 mobility_book_style.egg-info/requires.txt
 mobility_book_style.egg-info/top_level.txt
+mobility_book_style/data/alias.json
+mobility_book_style/data/design_tokens.json
 mobility_book_style/fonts/Inter-Italic-VariableFont_opsz,wght.ttf
 mobility_book_style/fonts/Inter-VariableFont_opsz,wght.ttf
 mobility_book_style/fonts/OFL.txt

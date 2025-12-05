@@ -117,7 +117,7 @@ def style_table(table, *, body_face=None, header_face=None):
         # header: row == 0
         if row == 0:
             cell.set_facecolor(header_face)
-            cell.set_edgecolor(TOKENS["color"]["body_border"])
+            cell.set_edgecolor(TOKENS["table"]["body_border"])
             cell.set_linewidth(0.8)
             cell.get_text().set_fontsize(TOKENS_PT["table"]["header_pt"])
             cell.get_text().set_fontfamily("Inter")
@@ -125,7 +125,7 @@ def style_table(table, *, body_face=None, header_face=None):
             cell.get_text().set_color(TOKENS["color"]["text"])
         else:
             cell.set_facecolor(body_face)
-            cell.set_edgecolor(TOKENS["color"]["body_border"])
+            cell.set_edgecolor(TOKENS["table"]["body_border"])
             cell.set_linewidth(0.5)
             cell.get_text().set_fontsize(TOKENS_PT["table"]["body_pt"])
             cell.get_text().set_fontfamily("Inter")

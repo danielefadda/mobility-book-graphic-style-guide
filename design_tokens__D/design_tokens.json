@@ -132,7 +132,7 @@
     "border-strong": { "value": "{colors.black.500}" },
 
     "info": { "value": "{colors.darkviolet.500}" },
-    "success": { "value": "{colors.teal.600}" },
+    "success": { "value": "{colors.olive.600}" },
     "warning": { "value": "{colors.gold.500}" },
     "danger": { "value": "{colors.burgundy.600}" }
   },
