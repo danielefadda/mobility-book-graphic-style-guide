@@ -53,73 +53,108 @@ def apply_matplotlib_theme():
         L'effetto persiste per tutta la sessione fino a quando non viene
         chiamato plt.style.use() o modificato manualmente rcParams.
     """
-    mpl.rcParams.update(
-        {
-            # Colori di sfondo
-            "figure.facecolor": TOKENS["color"]["background"],
-            "axes.facecolor": TOKENS["color"]["background"],
-            "savefig.facecolor": TOKENS["color"]["background"],
-            "savefig.edgecolor": TOKENS["color"]["background"],
-            
-            # Font
-            "font.family": "sans-serif",
-            "font.sans-serif": [f.strip() for f in TOKENS["font"]["base_stack"].split(",")],
-            
-            # Titoli e etichette
-            "axes.titlesize": TOKENS_PT["chart"]["title_pt"],
-            "axes.titleweight": TOKENS["font"]["weight_bold"],
-            "axes.labelsize": TOKENS_PT["chart"]["label_pt"],
-            "axes.labelweight": TOKENS["font"]["weight_regular"],
-            "axes.labelcolor": TOKENS["color"]["text"],
-            
-            # Ticks
-            "xtick.labelsize": TOKENS_PT["chart"]["tick_pt"],
-            "ytick.labelsize": TOKENS_PT["chart"]["tick_pt"],
-            "xtick.color": TOKENS["color"]["text"],
-            "ytick.color": TOKENS["color"]["text"],
-            "xtick.major.width": 0.5,
-            "ytick.major.width": 0.5,
-            "xtick.major.size": 5,
-            "ytick.major.size": 5,
-            
-            # Assi
-            "axes.edgecolor": TOKENS["color"]["domain"],
-            "axes.linewidth": 0.5,
-            "axes.grid": True,
-            "axes.grid.axis": "y",
-            
-            # Griglia
-            "grid.color": TOKENS["color"]["grid"],
-            "grid.linestyle": "--",
-            "grid.linewidth": 0.25,
-            "grid.alpha": 1.0,
-            "axes.axisbelow": True,  # Griglia dietro i dati
-            
-            # Spines (bordi)
-            "axes.spines.top": False,
-            "axes.spines.right": False,
-            "axes.spines.left": True,
-            "axes.spines.bottom": True,
-            
-            # Colori del testo
-            "text.color": TOKENS["color"]["text"],
-            
-            # Linee
-            "lines.linewidth": TOKENS["chart"]["line_width"],
-            "lines.markersize": 6,
-            "lines.solid_capstyle": "round",
-            
-            # Ciclo colori (palette)
-            "axes.prop_cycle": mpl.cycler(color=TOKENS["chart"]["category10"]),
-            
-            # Legenda
-            "legend.fontsize": TOKENS_PT["chart"]["legend_pt"],
-            "legend.frameon": False,
-            "legend.fancybox": False,
-            "legend.edgecolor": "none",
-        }
-    )
+    import matplotlib as mpl
+import matplotlib.pyplot as plt
+from cycler import cycler
 
+    # 1. FUNZIONI DI UTILITÀ
+    # ---------------------------------------------------------
+def px_to_pt(px):
+    """Converte pixel in punti tipografici (1 px = 0.75 pt standard)"""
+    return px * 0.50
+
+# Funzione dummy per simulare la risoluzione dei colori alias nel JSON.
+# Sostituisci questa logica con il tuo vero resolver di token se i valori sono ancora stringhe "{alias...}"
+def get_color(path):
+    # ESEMPIO: Se path è "text", cerca in TOKENS["color"]["text"]
+    # Qui dovresti restituire il codice HEX reale (es. #333333). 
+    # Per ora restituisco direttamente il valore assumendo che sia stato risolto.
+    val = path
+    return val 
+
+# 2. PREPARAZIONE DATI
+# ---------------------------------------------------------
+# Estraiamo la lista dei font pulita
+font_stack = [f.strip() for f in TOKENS["font"]["base_stack"].split(',')]
+
+# Risolviamo la palette categoriale (Chart Colors)
+cat10_palette = [c for c in TOKENS["chart"]["category10"]]
+
+# 3. CONFIGURAZIONE RCPARAMS
+# ---------------------------------------------------------
+mpl.rcParams.update({
+    # --- DIMENSIONI & RISOLUZIONE ---
+    'figure.figsize': [6, 3],     # Standard 6x3 pollici
+    'figure.dpi': 150,            # Alta risoluzione per schermi
+    
+    # --- COLORI DI SFONDO ---
+    "figure.facecolor": TOKENS["color"]["background"],
+    "axes.facecolor": TOKENS["color"]["background"],
+    "savefig.facecolor": TOKENS["color"]["background"],
+    
+    # --- FONT & TESTO ---
+    "font.family": "sans-serif",
+    # Matplotlib prova i font in ordine finché non ne trova uno installato
+    "font.sans-serif": font_stack,
+    "text.color": TOKENS["color"]["text"],
+    
+    # --- TITOLI (Chart Title) ---
+    # Altair "title" -> Matplotlib "axes.title"
+    "axes.titlesize": px_to_pt(TOKENS["chart"]["title_size_px"]),
+    "axes.titleweight": TOKENS["font"]["weight_bold"], # Accetta 600
+    "axes.titlelocation": "left",
+    "axes.titlepad": 10,  # Sposta il titolo più vicino all'asse
+    "axes.titlecolor": TOKENS["color"]["text"],
+
+    # --- ETICHETTE ASSI (Axis Labels es. "Tempo") ---
+    "axes.labelsize": px_to_pt(TOKENS["chart"]["label_size_px"]),
+    "axes.labelweight": TOKENS["font"]["weight_regular"], # Accetta 400
+    "axes.labelcolor": TOKENS["color"]["text"],
+    "axes.labelpad": 8,
+
+    # --- TICKS (Numeri sugli assi es. "10, 20") ---
+    "xtick.labelsize": px_to_pt(TOKENS["chart"]["tick_size_px"]),
+    "ytick.labelsize": px_to_pt(TOKENS["chart"]["tick_size_px"]),
+    "xtick.color": TOKENS["chart"]["tick_color"],
+    "ytick.color": TOKENS["chart"]["tick_color"],
+    # Dimensioni tacche (ticks)
+    "xtick.major.size": 4, 
+    "ytick.major.size": 4,
+    "xtick.major.width": 0.5,
+    "ytick.major.width": 0.5,
+    
+    # --- ASSI (Spines / Domain) ---
+    "axes.spines.top": False,
+    "axes.spines.right": False,
+    "axes.spines.left": True,
+    "axes.spines.bottom": True,
+    "axes.linewidth": 0.5,
+    "axes.edgecolor": TOKENS["chart"]["axis_color"], # Colore linea assi
+
+    # --- GRIGLIA ---
+    "axes.grid": True,
+    "axes.axisbelow": True,       # Griglia sotto i dati
+    "grid.color": TOKENS["chart"]["grid_color"],
+    "grid.linewidth": 0.5,        # 0.25px potrebbe essere troppo sottile in stampa
+    "grid.linestyle": (0, (6, 3)), # Replica il dash [6, 3] di Altair
+    "grid.alpha": 1.0,
+
+    # --- LINEE E COLORI ---
+    "lines.linewidth": px_to_pt(TOKENS["chart"]["line_width"]),
+    "lines.solid_capstyle": "round",
+    # Applica la palette category10 automaticamente ai grafici multi-linea
+    "axes.prop_cycle": cycler(color=cat10_palette),
+
+    # --- MARKER ---
+    "lines.markersize": TOKENS["chart"]["line_width"] * 1.5,
+    "lines.marker": TOKENS["chart"]["lines_marker"],
+
+    # --- LEGENDA ---
+    "legend.fontsize": px_to_pt(TOKENS["chart"]["legend_size_px"]),
+    "legend.title_fontsize": px_to_pt(TOKENS["chart"]["legend_size_px"]),
+    "legend.frameon": False,      # Niente box attorno alla legenda
+    "legend.loc": "upper right"
+})
 
 def style_table(table, *, body_face=None, header_face=None):
     """

@@ -85,10 +85,28 @@
       "900": "{alias.orange-900}"
     },
     "white": {
-      "500": "{alias.white-500}"
+      "050": "{alias.white-050}",
+      "100": "{alias.white-100}",
+      "200": "{alias.white-200}",
+      "300": "{alias.white-300}",
+      "400": "{alias.white-400}",
+      "500": "{alias.white-500}",
+      "600": "{alias.white-600}",
+      "700": "{alias.white-700}",
+      "800": "{alias.white-800}",
+      "900": "{alias.white-900}"
     },
     "black": {
-      "500": "{alias.black-500}"
+      "050": "{alias.black-050}",
+      "100": "{alias.black-100}",
+      "200": "{alias.black-200}",
+      "300": "{alias.black-300}",
+      "400": "{alias.black-400}",
+      "500": "{alias.black-500}",
+      "600": "{alias.black-600}",
+      "700": "{alias.black-700}",
+      "800": "{alias.black-800}",
+      "900": "{alias.black-900}"
     },
     "darkviolet": {
       "050": "{alias.darkviolet-050}",
@@ -179,7 +197,8 @@
     "label_size_px": 12,
     "tick_size_px": 11,
     "legend_size_px": 11,
-    "line_width": 2.0,
+    "line_width": 1.5,
+    "lines_marker": "o",
     "category10": [
       "{alias.teal-500}",
       "{alias.burgundy-500}",
@@ -191,7 +210,10 @@
       "{alias.paper-200}",
       "{alias.grayviolet-600}",
       "{alias.paper-100}"
-    ]
+    ],
+    "grid_color": "{alias.white-600}",
+    "axis_color": "{alias.white-800}",
+    "tick_color": "{alias.black-600}"
   },
 
   "table": {

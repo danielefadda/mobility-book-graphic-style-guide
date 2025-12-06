@@ -65,7 +65,7 @@ def _build_altair_theme():
                 "titleFont": TOKENS["font"]["base_stack"],
                 "titleFontWeight": TOKENS["font"]["weight_bold"],
                 "grid": True,
-                "gridColor": TOKENS["color"]["grid"],
+                "gridColor": TOKENS["chart"]["grid_color"],
                 "labelAngle": 0,
                 "domainWidth": 0.5,
                 "labelPadding": 2,
