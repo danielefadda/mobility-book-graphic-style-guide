@@ -3,40 +3,13 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Iterable
 
 import matplotlib as mpl
 import matplotlib.font_manager as fm
 from cycler import cycler
 
 from ._tokens import token
-
-
-def _px_to_pt(px: float | int) -> float:
-    return float(px) * 0.75
-
-
-def _as_pt(value: str | float | int) -> float:
-    if isinstance(value, (float, int)):
-        return float(value)
-    if isinstance(value, str) and value.endswith("pt"):
-        return float(value[:-2])
-    if isinstance(value, str) and value.endswith("px"):
-        return _px_to_pt(float(value[:-2]))
-    return float(value)
-
-
-def _as_dash(spec: str) -> tuple[int, Iterable[float]]:
-    parts = [p for p in spec.replace("pt", "").split() if p]
-    nums = tuple(float(p) for p in parts)
-    return (0, nums)
-
-
-def _palette_from_numeric_keys(mapping: dict) -> list:
-    try:
-        return [mapping[k] for k in sorted(mapping, key=lambda v: int(v))]
-    except Exception:
-        return list(mapping.values())
+from .utils import to_pt, to_inches, parse_dash_pattern, palette_from_numeric_keys
 
 
 _FONTS_REGISTERED = False
@@ -73,8 +46,8 @@ def apply_matplotlib_theme():
     # Font stack (es. "Inter, sans-serif" -> ["Inter", "sans-serif"])
     font_stack = [f.strip() for f in token.font.family.sans.split(",")]
 
-    palette = _palette_from_numeric_keys(token.color.chart.categorical)
-    grid_dash = _as_dash(token.chart.element.grid.dash)
+    palette = palette_from_numeric_keys(token.color.chart.categorical)
+    grid_dash = parse_dash_pattern(token.chart.element.grid.dash)
 
     mpl.rcParams.update({
         "figure.facecolor": token.color.background.default,
@@ -85,43 +58,43 @@ def apply_matplotlib_theme():
         "font.sans-serif": font_stack,
         "text.color": token.color.text.primary,
 
-        "axes.titlesize": _as_pt(token.chart.typography.title.fontSize),
+        "axes.titlesize": to_pt(token.chart.typography.title.fontSize),
         "axes.titleweight": token.chart.typography.title.fontWeight,
         "axes.titlelocation": "left",
         "axes.titlecolor": token.chart.typography.title.color,
 
-        "axes.labelsize": _as_pt(token.chart.typography.label.fontSize),
+        "axes.labelsize": to_pt(token.chart.typography.label.fontSize),
         "axes.labelweight": token.chart.typography.label.fontWeight,
         "axes.labelcolor": token.chart.typography.label.color,
         "axes.labelpad": 8,
 
-        "xtick.labelsize": _as_pt(token.chart.typography.label.fontSize),
-        "ytick.labelsize": _as_pt(token.chart.typography.label.fontSize),
+        "xtick.labelsize": to_pt(token.chart.typography.label.fontSize),
+        "ytick.labelsize": to_pt(token.chart.typography.label.fontSize),
         "xtick.color": token.chart.element.tick.color,
         "ytick.color": token.chart.element.tick.color,
-        "xtick.major.size": _as_pt(token.chart.element.tick.length),
-        "ytick.major.size": _as_pt(token.chart.element.tick.length),
-        "xtick.major.width": _as_pt(token.chart.element.tick.width),
-        "ytick.major.width": _as_pt(token.chart.element.tick.width),
+        "xtick.major.size": to_pt(token.chart.element.tick.length),
+        "ytick.major.size": to_pt(token.chart.element.tick.length),
+        "xtick.major.width": to_pt(token.chart.element.tick.width),
+        "ytick.major.width": to_pt(token.chart.element.tick.width),
 
         "axes.spines.top": False,
         "axes.spines.right": False,
-        "axes.linewidth": _as_pt(token.chart.element.spine.width),
+        "axes.linewidth": to_pt(token.chart.element.spine.width),
         "axes.edgecolor": token.chart.element.spine.color,
 
         "axes.grid": True,
         "axes.axisbelow": True,
         "grid.color": token.chart.element.grid.color,
-        "grid.linewidth": _as_pt(token.chart.element.grid.width),
+        "grid.linewidth": to_pt(token.chart.element.grid.width),
         "grid.linestyle": grid_dash,
         "grid.alpha": 1.0,
 
-        "lines.linewidth": max(1.5, _as_pt(token.chart.element.axis.width) * 2.0),
+        "lines.linewidth": max(1.5, to_pt(token.chart.element.axis.width) * 2.0),
         "lines.solid_capstyle": "round",
         "axes.prop_cycle": cycler(color=palette),
 
-        "legend.fontsize": _as_pt(token.chart.typography.annotation.fontSize),
-        "legend.title_fontsize": _as_pt(token.chart.typography.label.fontSize),
+        "legend.fontsize": to_pt(token.chart.typography.annotation.fontSize),
+        "legend.title_fontsize": to_pt(token.chart.typography.label.fontSize),
         "legend.frameon": False,
         "legend.loc": "upper right",
     })
@@ -136,8 +109,8 @@ def style_table(table, *, body_face: str | None = None, header_face: str | None 
     header_border = token.component.table.color.border.spanner
     body_border = token.component.table.color.border.body
 
-    header_size = _as_pt(token.component.table.typography.header.fontSize)
-    body_size = _as_pt(token.component.table.typography.body.fontSize)
+    header_size = to_pt(token.component.table.typography.header.fontSize)
+    body_size = to_pt(token.component.table.typography.body.fontSize)
     text_color = token.color.text.primary
     font_stack = [f.strip() for f in token.font.family.sans.split(",")]
 

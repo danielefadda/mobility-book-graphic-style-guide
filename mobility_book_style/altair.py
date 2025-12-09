@@ -29,20 +29,7 @@ except ImportError:
     alt = None
 
 from ._tokens import token
-
-
-def _palette_from_numeric_keys(mapping: dict) -> list:
-    try:
-        return [mapping[k] for k in sorted(mapping, key=lambda v: int(v))]
-    except Exception:
-        return list(mapping.values())
-
-
-def _num(value: str | float | int) -> float:
-    if isinstance(value, (float, int)):
-        return float(value)
-    cleaned = value.replace("pt", "").replace("px", "")
-    return float(cleaned)
+from .utils import to_px, palette_from_numeric_keys
 
 
 def _build_altair_theme():
@@ -55,8 +42,11 @@ def _build_altair_theme():
     Note:
         Questa funzione è interna e non dovrebbe essere chiamata direttamente.
         Usa enable_altair_theme() invece.
+        
+        Altair/Vega-Lite usa pixel CSS, quindi tutti i valori in pt dai token
+        vengono convertiti in px usando to_px().
     """
-    palette = _palette_from_numeric_keys(token.color.chart.categorical)
+    palette = palette_from_numeric_keys(token.color.chart.categorical)
 
     return {
         "config": {
@@ -67,39 +57,39 @@ def _build_altair_theme():
                 "color": token.chart.typography.title.color,
                 "anchor": "start",
                 "dy": -15,
-                "fontSize": _num(token.chart.typography.title.fontSize),
+                "fontSize": to_px(token.chart.typography.title.fontSize),
                 "font": token.font.family.sans,
                 "fontWeight": token.chart.typography.title.fontWeight,
             },
             "axis": {
                 "labelColor": token.chart.typography.label.color,
-                "labelFontSize": _num(token.chart.typography.label.fontSize),
+                "labelFontSize": to_px(token.chart.typography.label.fontSize),
                 "labelFont": token.font.family.sans,
                 "labelFontWeight": token.chart.typography.label.fontWeight,
                 "titleColor": token.chart.typography.label.color,
-                "titleFontSize": _num(token.chart.typography.label.fontSize),
+                "titleFontSize": to_px(token.chart.typography.label.fontSize),
                 "titleFont": token.font.family.sans,
                 "titleFontWeight": token.chart.typography.title.fontWeight,
                 "grid": True,
                 "gridColor": token.chart.element.grid.color,
                 "labelAngle": 0,
-                "domainWidth": _num(token.chart.element.axis.width),
+                "domainWidth": to_px(token.chart.element.axis.width),
                 "labelPadding": 2,
-                "tickSize": _num(token.chart.element.tick.length),
-                "tickWidth": _num(token.chart.element.tick.width),
+                "tickSize": to_px(token.chart.element.tick.length),
+                "tickWidth": to_px(token.chart.element.tick.width),
             },
             "axisX": {
-                "gridDash": [_num(v) for v in token.chart.element.grid.dash.split()],
-                "gridWidth": _num(token.chart.element.grid.width) / 2,
+                "gridDash": [to_px(v) for v in token.chart.element.grid.dash.split()],
+                "gridWidth": to_px(token.chart.element.grid.width) / 2,
                 "gridColor": token.chart.element.grid.color,
             },
             "axisY": {
-                "gridDash": [_num(v) for v in token.chart.element.grid.dash.split()],
-                "gridWidth": _num(token.chart.element.grid.width) / 2,
+                "gridDash": [to_px(v) for v in token.chart.element.grid.dash.split()],
+                "gridWidth": to_px(token.chart.element.grid.width) / 2,
                 "gridColor": token.chart.element.grid.color,
             },
             "legend": {
-                "labelFontSize": _num(token.chart.typography.annotation.fontSize),
+                "labelFontSize": to_px(token.chart.typography.annotation.fontSize),
                 "padding": 1,
                 "symbolType": "square",
                 "labelFont": token.font.family.sans,
@@ -117,7 +107,7 @@ def _build_altair_theme():
             },
             "range": {"category": palette},
             "point": {"filled": True},
-            "line": {"strokeWidth": _num(token.chart.element.axis.width) * 2},
+            "line": {"strokeWidth": to_px(token.chart.element.axis.width) * 2},
             "view": {"stroke": "transparent"},
         }
     }

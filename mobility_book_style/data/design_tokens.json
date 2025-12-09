@@ -244,6 +244,16 @@
     }
   },
 
+  "layout": {
+    "column": {
+      "width": { 
+        "value": "310pt", 
+        "type": "dimension", 
+        "description": "Larghezza massima della colonna di testo o dell'area figure."
+      }
+    }
+  },
+
   "component": {
     "table": {
       "layout": {
@@ -310,6 +320,18 @@
         "warning": {
           "borderColor": { "value": "{color.intent.warning}", "type": "color" },
           "label": { "value": "Attenzione", "type": "content" }
+        }
+      }
+    },
+    "figure": {
+      "default": {
+        "width": { 
+          "value": "{layout.column.width}", 
+          "type": "dimension" 
+        },
+        "height": { 
+          "value": "230pt", 
+          "type": "dimension" 
         }
       }
     }

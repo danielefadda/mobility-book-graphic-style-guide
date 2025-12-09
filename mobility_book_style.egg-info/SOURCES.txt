@@ -28,6 +28,7 @@ mobility_book_style/_tokens.py
 mobility_book_style/altair.py
 mobility_book_style/export.py
 mobility_book_style/matplotlib.py
+mobility_book_style/utils.py
 mobility_book_style.egg-info/PKG-INFO
 mobility_book_style.egg-info/SOURCES.txt
 mobility_book_style.egg-info/dependency_links.txt
