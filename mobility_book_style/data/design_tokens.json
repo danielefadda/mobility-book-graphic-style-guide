@@ -186,7 +186,7 @@
       "_comment": "Configuration for non-color chart elements",
       "element": {
           "grid": {
-              "color": { "value": "{color.base.neutral.200}", "type": "color" },
+              "color": { "value": "{color.base.neutral.black}", "type": "color" },
               "width": { "value": "0.5pt", "type": "dimension" },
               "dash": { "value": "1pt 3pt", "type": "strokeStyle" }
           },

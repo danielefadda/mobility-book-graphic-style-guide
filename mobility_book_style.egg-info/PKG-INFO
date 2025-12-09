@@ -140,20 +140,25 @@ plt.savefig('table.png', dpi=144, bbox_inches='tight')
 import mobility_book_style as mbs
 
 # Esporta palette come Adobe Swatch Exchange (.ase)
-mbs.export_ase('mobility_colors.ase')
+mbs.export_ase('mobility_colors.ase', include_base=True)
 
-# Ottieni dizionario colori
+# Ottieni dizionario colori risolto
 colors = mbs.export_colors_dict()
-print(f"Colori alias: {len(colors['aliases'])}")
-print(f"Colori semantici: {len(colors['tokens'])}")
-print(f"Category10: {len(colors['category10'])}")
+print(f"Colori (flat): {len(colors['color_flat'])}")
+print(f"Palette categoriale: {len(colors['categorical_palette'])}")
+print(f"Palette divergente: {len(colors['divergent_palette'])}")
+
+# Accesso dot-notation ai token
+brand_primary = mbs.token.color.brand.primary
+table_title_size = mbs.token.component.table.typography.title.fontSize
+print(brand_primary, table_title_size)
 ```
 
 ---
 
 ## 📚 Documentazione
 
-- **[UPDATING.md](UPDATING.md)** - Come modificare i design token e gli alias colori
+- **[UPDATING.md](UPDATING.md)** - Come modificare i design token
 - **[examples/demo_new_api.ipynb](examples/demo_new_api.ipynb)** - Notebook completo con esempi
 
 ---
@@ -163,52 +168,45 @@ print(f"Category10: {len(colors['category10'])}")
 ```
 mobility_book_style/
 ├── data/
-│   ├── alias.json              # Colori primitivi (HEX)
-│   └── design_tokens.json      # Token semantici
-├── _colors.py                  # Carica alias.json
-├── _tokens.py                  # Carica design_tokens.json
-├── matplotlib.py               # Builder per Matplotlib
-├── altair.py                   # Builder per Altair
+│   └── design_tokens.json      # Design token (unica source of truth)
+├── _tokens.py                  # Loader + dot-notation token
+├── matplotlib.py               # Tema Matplotlib basato sui token
+├── altair.py                   # Tema Altair basato sui token
 ├── export.py                   # Export ASE e dizionari
 └── fonts/                      # Font Inter (TTF)
 ```
 
 ### Principio Fondamentale
 
-**I file JSON sono la source of truth**. Tutti i moduli Python leggono i token dai JSON al momento dell'import.
-
-```
-alias.json → ALIAS_COLORS → design_tokens.json → TOKENS → matplotlib/altair
-```
+**design_tokens.json è la sola source of truth.** I moduli Python leggono quel file e lo espongono come oggetto `mbs.token` navigabile via dot-notation.
 
 ---
 
 ## 🎨 Design Tokens
 
-### Colori Primitivi (alias.json)
+### Token (design_tokens.json)
 
 ```json
 {
-  "teal-500": "#348b96",
-  "burgundy-500": "#7b0029",
-  "black-500": "#262a33",
-  "white-500": "#ffffff"
-}
-```
-
-### Token Semantici (design_tokens.json)
-
-```json
-{
-  "semantic": {
-    "brand-primary": { "value": "{colors.teal.500}" },
-    "text-primary": { "value": "{colors.black.500}" },
-    "bg-default": { "value": "{colors.white.500}" }
+  "color": {
+    "brand": {
+      "primary": { "value": "{color.base.teal.500}" }
+    },
+    "text": {
+      "primary": { "value": "{color.base.neutral.black}" },
+      "secondary": { "value": "{color.base.slate.600}" }
+    },
+    "chart": {
+      "categorical": {
+        "1": { "value": "{color.base.teal.500}" },
+        "2": { "value": "{color.base.burgundy.500}" }
+      }
+    }
   }
 }
 ```
 
-I riferimenti `{alias.xxx}` e `{colors.xxx}` vengono risolti automaticamente.
+I riferimenti come `{color.base.teal.500}` vengono risolti automaticamente all'import.
 
 ---
 
@@ -218,8 +216,8 @@ Vedi **[UPDATING.md](UPDATING.md)** per una guida completa.
 
 ### Quick Start
 
-1. Modifica `mobility_book_style/data/alias.json` o `design_tokens.json`
-2. Valida il JSON: `python -m json.tool file.json > /dev/null`
+1. Modifica `mobility_book_style/data/design_tokens.json`
+2. Valida il JSON: `python -m json.tool mobility_book_style/data/design_tokens.json > /dev/null`
 3. Riavvia il kernel Python (o riesegui lo script)
 4. I nuovi valori vengono caricati automaticamente ✅
 
@@ -261,13 +259,11 @@ Esplora i notebook in `examples/`:
 │
 ├── mobility_book_style/        # Libreria principale
 │   ├── __init__.py
-│   ├── _colors.py
 │   ├── _tokens.py
 │   ├── matplotlib.py
 │   ├── altair.py
 │   ├── export.py
 │   ├── data/
-│   │   ├── alias.json
 │   │   └── design_tokens.json
 │   └── fonts/
 │       └── Inter-*.ttf
@@ -294,8 +290,8 @@ Esplora i notebook in `examples/`:
 ### ✅ Implementato
 
 - ✅ Design token system (JSON based)
-- ✅ 110+ colori alias (teal, burgundy, purple, olive, gold, etc.)
-- ✅ Token semantici (brand, text, background, etc.)
+- ✅ Design token system (JSON unico)
+- ✅ Token semantici (brand, text, background, chart, component, etc.)
 - ✅ Builder Matplotlib (grafici, tabelle)
 - ✅ Builder Altair (grafici interattivi)
 - ✅ Font Inter (auto-registrato)
@@ -332,7 +328,7 @@ Questo progetto è distribuito sotto licenza MIT. Vedi il file [LICENSE](LICENSE
 
 ## 👤 Autori
 
-**Mobility Book Team**
+**Daniele Fadda [github.com/danielefadda](https://www.github.com/danielefadda)**
 
 - Repository: [mobility-book-graphic-style-guide](https://github.com/danielefadda/mobility-book-graphic-style-guide)
 
