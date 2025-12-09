@@ -36,15 +36,14 @@ Note:
 __version__ = "0.1.0"
 __author__ = "Daniele Fadda"
 
-# Registra i font Inter in Matplotlib (auto-eseguito all'import)
-from . import _fonts  # noqa: F401
-
 # API pubblica principale
+from ._tokens import token
 from .matplotlib import apply_matplotlib_theme, style_table
 from .altair import enable_altair_theme, disable_altair_theme
 from .export import export_ase, export_colors_dict
 
 __all__ = [
+    "token",
     "apply_matplotlib_theme",
     "style_table",
     "enable_altair_theme",

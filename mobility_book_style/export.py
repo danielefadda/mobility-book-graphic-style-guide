@@ -10,8 +10,7 @@ import struct
 from pathlib import Path
 from typing import Dict, Tuple
 
-from ._colors import ALIAS_COLORS
-from ._tokens import TOKENS
+from ._tokens import token, token_dict
 
 
 def hex_to_rgb01(hex_color: str) -> Tuple[float, float, float]:
@@ -67,51 +66,40 @@ def _ase_color_block(name: str, rgb: Tuple[float, float, float]) -> bytes:
     return struct.pack(">HI", 0x0001, len(payload)) + payload
 
 
-def export_ase(output_path: str | Path, *, include_aliases: bool = True) -> Path:
-    """
-    Esporta la palette colori in formato Adobe Swatch Exchange (.ase).
-    
-    Questo formato è compatibile con Adobe Photoshop, Illustrator, InDesign
-    e altre applicazioni che supportano le palette ASE.
-    
-    Args:
-        output_path: Percorso del file .ase da creare
-        include_aliases: Se True, include anche i colori alias primitivi
-    
-    Returns:
-        Path: Percorso del file creato
-    
-    Example:
-        >>> import mobility_book_style as mbs
-        >>> mbs.export_ase("my_colors.ase")
-        PosixPath('my_colors.ase')
-    
-    Note:
-        Il file ASE conterrà:
-        - Alias colors (se include_aliases=True): colori primitivi della palette
-        - Token colors: colori semantici (text, background, accent, ecc.)
-        - Chart category10: palette categoriale per grafici multi-serie
-    """
+def _flatten_colors(data: Dict, prefix: str = "") -> Dict[str, str]:
+    flat: Dict[str, str] = {}
+    for key, val in data.items():
+        if str(key).startswith("_"):
+            continue  # salta commenti/metadati
+        full_key = f"{prefix}.{key}" if prefix else key
+        if isinstance(val, dict):
+            flat.update(_flatten_colors(val, full_key))
+        elif isinstance(val, str) and val.startswith("#"):
+            flat[full_key] = val
+    return flat
+
+
+def _ordered_palette(mapping: Dict[str, str]) -> list[str]:
+    try:
+        return [mapping[k] for k in sorted(mapping.keys(), key=lambda v: int(v))]
+    except Exception:
+        return list(mapping.values())
+
+
+def export_ase(output_path: str | Path, *, include_base: bool = True) -> Path:
+    """Esporta i colori in formato Adobe Swatch Exchange (.ase)."""
+
     output_path = Path(output_path)
     blocks = []
 
-    # Aliases (colori primitivi)
-    if include_aliases:
-        for key, hex_val in ALIAS_COLORS.items():
-            label = f"alias {key} ({hex_val.upper()})"
-            blocks.append(_ase_color_block(label, hex_to_rgb01(hex_val)))
+    colors_flat = _flatten_colors(token_dict["color"], prefix="color")
 
-    # Token colors (colori semantici)
-    for key, hex_val in TOKENS["color"].items():
-        label = f"token color-{key} ({hex_val.upper()})"
+    for name, hex_val in colors_flat.items():
+        if not include_base and name.startswith("color.base"):
+            continue
+        label = f"{name} ({hex_val.upper()})"
         blocks.append(_ase_color_block(label, hex_to_rgb01(hex_val)))
 
-    # Chart category10 palette
-    for i, hex_val in enumerate(TOKENS["chart"]["category10"], start=1):
-        label = f"chart category10-{i:02d} ({hex_val.upper()})"
-        blocks.append(_ase_color_block(label, hex_to_rgb01(hex_val)))
-
-    # Header ASE (version 1.0, block count)
     header = b"ASEF" + struct.pack(">HHI", 1, 0, len(blocks))
     ase_bytes = header + b"".join(blocks)
 
@@ -120,31 +108,13 @@ def export_ase(output_path: str | Path, *, include_aliases: bool = True) -> Path
 
 
 def export_colors_dict() -> Dict[str, str]:
-    """
-    Esporta tutti i colori come dizionario Python.
-    
-    Returns:
-        Dict: Dizionario con tutte le palette
-            - 'aliases': Colori primitivi
-            - 'tokens': Colori semantici
-            - 'category10': Palette categoriale
-    
-    Example:
-        >>> import mobility_book_style as mbs
-        >>> colors = mbs.export_colors_dict()
-        >>> colors['tokens']['text']
-        '#000000'
-        >>> colors['category10'][0]
-        '#1696D2'
-    
-    Note:
-        Questa funzione è utile per:
-        - Debugging
-        - Export in altri formati (JSON, YAML, ecc.)
-        - Integrazione con altri tool
-    """
+    """Esporta i colori come dizionario annidato e flatten."""
+
+    categorical = _flatten_colors(token_dict["color"]["chart"], prefix="color.chart")
     return {
-        "aliases": ALIAS_COLORS.copy(),
-        "tokens": TOKENS["color"].copy(),
-        "category10": TOKENS["chart"]["category10"].copy(),
+        "color": token_dict["color"],
+        "color_flat": _flatten_colors(token_dict["color"], prefix="color"),
+        "categorical_palette": _ordered_palette(token.color.chart.categorical),
+        "divergent_palette": _ordered_palette(token.color.chart.divergent),
+        "chart_colors": categorical,
     }

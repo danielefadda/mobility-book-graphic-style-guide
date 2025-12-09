@@ -24,8 +24,6 @@ examples/check_env.ipynb
 examples/check_env.py
 examples/demo_new_api.ipynb
 mobility_book_style/__init__.py
-mobility_book_style/_colors.py
-mobility_book_style/_fonts.py
 mobility_book_style/_tokens.py
 mobility_book_style/altair.py
 mobility_book_style/export.py
@@ -35,7 +33,6 @@ mobility_book_style.egg-info/SOURCES.txt
 mobility_book_style.egg-info/dependency_links.txt
 mobility_book_style.egg-info/requires.txt
 mobility_book_style.egg-info/top_level.txt
-mobility_book_style/data/alias.json
 mobility_book_style/data/design_tokens.json
 mobility_book_style/fonts/Inter-Italic-VariableFont_opsz,wght.ttf
 mobility_book_style/fonts/Inter-VariableFont_opsz,wght.ttf

@@ -28,7 +28,21 @@ except ImportError:
     ALTAIR_AVAILABLE = False
     alt = None
 
-from ._tokens import TOKENS
+from ._tokens import token
+
+
+def _palette_from_numeric_keys(mapping: dict) -> list:
+    try:
+        return [mapping[k] for k in sorted(mapping, key=lambda v: int(v))]
+    except Exception:
+        return list(mapping.values())
+
+
+def _num(value: str | float | int) -> float:
+    if isinstance(value, (float, int)):
+        return float(value)
+    cleaned = value.replace("pt", "").replace("px", "")
+    return float(cleaned)
 
 
 def _build_altair_theme():
@@ -42,66 +56,68 @@ def _build_altair_theme():
         Questa funzione è interna e non dovrebbe essere chiamata direttamente.
         Usa enable_altair_theme() invece.
     """
+    palette = _palette_from_numeric_keys(token.color.chart.categorical)
+
     return {
         "config": {
-            "background": TOKENS["color"]["background"],
-            "font": TOKENS["font"]["base_stack"],
-            "mark": {"color": TOKENS["color"]["accent"]},
+            "background": token.color.background.default,
+            "font": token.font.family.sans,
+            "mark": {"color": token.color.brand.accent},
             "title": {
-                "color": TOKENS["color"]["text"],
+                "color": token.chart.typography.title.color,
                 "anchor": "start",
                 "dy": -15,
-                "fontSize": TOKENS["chart"]["title_size_px"],
-                "font": TOKENS["font"]["base_stack"],
-                "fontWeight": TOKENS["font"]["weight_bold"],
+                "fontSize": token.chart.typography.title.fontSize,
+                "font": token.font.family.sans,
+                "fontWeight": token.chart.typography.title.fontWeight,
             },
             "axis": {
-                "labelColor": TOKENS["color"]["text"],
-                "labelFontSize": TOKENS["chart"]["tick_size_px"],
-                "labelFont": TOKENS["font"]["base_stack"],
-                "labelFontWeight": TOKENS["font"]["weight_regular"],
-                "titleColor": TOKENS["color"]["text"],
-                "titleFontSize": TOKENS["chart"]["label_size_px"],
-                "titleFont": TOKENS["font"]["base_stack"],
-                "titleFontWeight": TOKENS["font"]["weight_bold"],
+                "labelColor": token.chart.typography.label.color,
+                "labelFontSize": token.chart.typography.label.fontSize,
+                "labelFont": token.font.family.sans,
+                "labelFontWeight": token.chart.typography.label.fontWeight,
+                "titleColor": token.chart.typography.label.color,
+                "titleFontSize": token.chart.typography.label.fontSize,
+                "titleFont": token.font.family.sans,
+                "titleFontWeight": token.chart.typography.title.fontWeight,
                 "grid": True,
-                "gridColor": TOKENS["chart"]["grid_color"],
+                "gridColor": token.chart.element.grid.color,
                 "labelAngle": 0,
-                "domainWidth": 0.5,
+                "domainWidth": _num(token.chart.element.axis.width),
                 "labelPadding": 2,
-                "tickSize": 5,
-                "tickWidth": 0.5,
+                "tickSize": _num(token.chart.element.tick.length),
+                "tickWidth": _num(token.chart.element.tick.width),
             },
             "axisX": {
-                "gridDash": [6, 3],
-                "gridWidth": 0.25,
-                "gridColor": TOKENS["color"]["grid"],
+                "gridDash": [_num(v) for v in token.chart.element.grid.dash.split()],
+                "gridWidth": _num(token.chart.element.grid.width) / 2,
+                "gridColor": token.chart.element.grid.color,
             },
             "axisY": {
-                "gridDash": [6, 3],
-                "gridWidth": 0.25,
-                "gridColor": TOKENS["color"]["grid"],
+                "gridDash": [_num(v) for v in token.chart.element.grid.dash.split()],
+                "gridWidth": _num(token.chart.element.grid.width) / 2,
+                "gridColor": token.chart.element.grid.color,
             },
             "legend": {
-                "labelFontSize": TOKENS["chart"]["legend_size_px"],
+                "labelFontSize": token.chart.typography.annotation.fontSize,
                 "padding": 1,
                 "symbolType": "square",
-                "labelFont": TOKENS["font"]["base_stack"],
-                "titleFont": TOKENS["font"]["base_stack"],
+                "labelFont": token.font.family.sans,
+                "titleFont": token.font.family.sans,
             },
             "style": {
                 "guide-label": {
-                    "font": TOKENS["font"]["base_stack"],
-                    "fill": TOKENS["color"]["text"],
+                    "font": token.font.family.sans,
+                    "fill": token.chart.typography.label.color,
                 },
                 "guide-title": {
-                    "font": TOKENS["font"]["base_stack"],
-                    "fill": TOKENS["color"]["text"],
+                    "font": token.font.family.sans,
+                    "fill": token.chart.typography.label.color,
                 },
             },
-            "range": {"category": TOKENS["chart"]["category10"]},
+            "range": {"category": palette},
             "point": {"filled": True},
-            "line": {"strokeWidth": TOKENS["chart"]["line_width"]},
+            "line": {"strokeWidth": _num(token.chart.element.axis.width) * 2},
             "view": {"stroke": "transparent"},
         }
     }

@@ -29,18 +29,18 @@ def test_export_ase_header():
 
 
 def test_export_ase_with_and_without_aliases():
-    """Verifica che include_aliases funzioni."""
+    """Verifica che include_base filtri le palette base."""
     with tempfile.TemporaryDirectory() as tmpdir:
-        # Con aliases
-        with_aliases = Path(tmpdir) / "with_aliases.ase"
-        mbs.export_ase(with_aliases, include_aliases=True)
+        # Con base
+        with_base = Path(tmpdir) / "with_base.ase"
+        mbs.export_ase(with_base, include_base=True)
 
-        # Senza aliases
-        without_aliases = Path(tmpdir) / "without_aliases.ase"
-        mbs.export_ase(without_aliases, include_aliases=False)
+        # Senza base
+        without_base = Path(tmpdir) / "without_base.ase"
+        mbs.export_ase(without_base, include_base=False)
 
-        # Il file con aliases dovrebbe essere più grande
-        assert with_aliases.stat().st_size > without_aliases.stat().st_size
+        # Il file con i colori base dovrebbe essere più grande
+        assert with_base.stat().st_size > without_base.stat().st_size
 
 
 def test_export_colors_dict_structure():
@@ -48,30 +48,28 @@ def test_export_colors_dict_structure():
     colors = mbs.export_colors_dict()
 
     # Verifica chiavi principali
-    assert "aliases" in colors
-    assert "tokens" in colors
-    assert "category10" in colors
+    assert "color" in colors
+    assert "color_flat" in colors
+    assert "categorical_palette" in colors
+    assert "divergent_palette" in colors
 
     # Verifica che siano dizionari/liste
-    assert isinstance(colors["aliases"], dict)
-    assert isinstance(colors["tokens"], dict)
-    assert isinstance(colors["category10"], list)
+    assert isinstance(colors["color"], dict)
+    assert isinstance(colors["color_flat"], dict)
+    assert isinstance(colors["categorical_palette"], list)
+    assert isinstance(colors["divergent_palette"], list)
 
 
 def test_export_colors_dict_content():
     """Verifica il contenuto del dizionario esportato."""
     colors = mbs.export_colors_dict()
 
-    # Verifica alcuni colori specifici
-    assert "black-500" in colors["aliases"]
-    assert colors["aliases"]["black-500"].startswith("#")
+    assert colors["color"]["brand"]["primary"].startswith("#")
+    assert colors["color"]["text"]["primary"].startswith("#")
 
-    assert "text" in colors["tokens"]
-    assert colors["tokens"]["text"].startswith("#")
-
-    # Verifica category10 (10 colori)
-    assert len(colors["category10"]) == 10
-    assert all(c.startswith("#") for c in colors["category10"])
+    # Palette categoriale
+    assert len(colors["categorical_palette"]) == 7
+    assert all(c.startswith("#") for c in colors["categorical_palette"])
 
 
 def test_hex_to_rgb01():

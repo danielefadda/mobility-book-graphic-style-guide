@@ -1,144 +1,148 @@
-"""
-Design tokens semantici - Letti dinamicamente da JSON.
+"""Loader dei design token con accesso dot-notation.
 
-I design tokens definiscono la semantica dei colori e delle dimensioni
-utilizzate nelle visualizzazioni. Sono costruiti a partire dal file
-mobility_book_style/data/design_tokens.json.
+Questo modulo è l'unica fonte di verità per i token. Legge il file
+``design_tokens.json``, risolve i riferimenti (es. ``{color.base.teal.500}``)
+e restituisce:
 
-Importante:
-    Questi valori sono immutabili e letti dal JSON. Per modificare i token,
-    edita il file design_tokens.json e riavvia il kernel Python.
+- ``token``: oggetto navigabile via dot-notation, che restituisce i valori.
+- ``token_dict``: dizionario Python con i soli valori risolti.
+- ``token_raw``: dizionario con il contenuto originale del JSON (inclusi type/description).
+
+I token sono dati puri: nessuna logica di applicazione o trasformazione viene
+esposta qui. La logica di consumo resta nei moduli ``matplotlib.py`` e
+``altair.py``.
 """
+
+from __future__ import annotations
 
 import json
 import re
 from pathlib import Path
-from typing import Any
+from typing import Any, Mapping
 
-from ._colors import ALIAS_COLORS
-
-
-def px_to_pt(px: float) -> float:
-    """
-    Converte pixel in punti tipografici.
-    
-    1pt = 1/72 inch; 1px ~ 0.75pt (96dpi standard).
-    Manteniamo 0.75 per coerenza editoriale.
-    
-    Args:
-        px: Valore in pixel
-        
-    Returns:
-        float: Valore convertito in punti
-    """
-    return px * 0.75
+TOKEN_JSON_PATH = Path(__file__).parent / "data" / "design_tokens.json"
 
 
-def _resolve_references(data: Any, alias_colors: dict) -> Any:
-    """
-    Risolve i riferimenti nel formato {alias.xxx} o {colors.xxx} ricorsivamente.
-    
-    Esempio:
-        Input: "{alias.teal-500}"
-        Output: "#348b96"
-    
-    Args:
-        data: Dati grezzi (dict, list, string, etc.)
-        alias_colors: Dizionario ALIAS_COLORS per risolvere i riferimenti
-        
-    Returns:
-        Dati con tutti i riferimenti risolti
-    """
-    if isinstance(data, dict):
-        return {k: _resolve_references(v, alias_colors) for k, v in data.items()}
-    elif isinstance(data, list):
-        return [_resolve_references(item, alias_colors) for item in data]
-    elif isinstance(data, str):
-        # Risolvi {alias.xxx-yyy} → valore HEX
-        match = re.match(r'\{alias\.([^}]+)\}', data)
-        if match:
-            key = match.group(1)
-            if key not in alias_colors:
-                raise KeyError(
-                    f"Alias '{key}' non trovato in alias.json. "
-                    f"Chiavi disponibili: {list(alias_colors.keys())}"
-                )
-            return alias_colors[key]
-        
-        # I riferimenti {colors.xxx} o {semantic.xxx} rimangono come stringa
-        # (per ora non sono risolti, potrebbero essere usati per validazione)
-        return data
-    else:
-        return data
+class TokenNode:
+    """Nodo navigabile che restituisce valori con dot-notation."""
+
+    def __init__(self, data: Any, path: tuple[str, ...] | None = None):
+        self._data = data
+        self._path = path or ()
+
+    def __getattr__(self, name: str) -> Any:
+        if isinstance(self._data, Mapping) and name in self._data:
+            child = self._data[name]
+            return child if _is_leaf(child) else TokenNode(child, (*self._path, name))
+        raise AttributeError(f"Token '{'.'.join(self._path)}' non contiene '{name}'")
+
+    def __getitem__(self, key: Any) -> Any:
+        if isinstance(self._data, Mapping):
+            child = self._data[key]
+            return child if _is_leaf(child) else TokenNode(child, (*self._path, str(key)))
+        if isinstance(self._data, list):
+            child = self._data[key]
+            return child if _is_leaf(child) else TokenNode(child, (*self._path, str(key)))
+        raise TypeError("Token leaf non indicizzabile")
+
+    def __iter__(self):
+        if isinstance(self._data, Mapping):
+            return iter(self._data)
+        if isinstance(self._data, list):
+            return iter(self._data)
+        raise TypeError("Token leaf non iterabile")
+
+    def __len__(self) -> int:
+        if isinstance(self._data, Mapping):
+            return len(self._data)
+        if isinstance(self._data, list):
+            return len(self._data)
+        raise TypeError("Token leaf non ha lunghezza")
+
+    def keys(self):
+        if isinstance(self._data, Mapping):
+            return self._data.keys()
+        raise TypeError("Token leaf non ha chiavi")
+
+    def values(self):
+        if isinstance(self._data, Mapping):
+            return self._data.values()
+        raise TypeError("Token leaf non ha valori")
+
+    def items(self):
+        if isinstance(self._data, Mapping):
+            return self._data.items()
+        raise TypeError("Token leaf non ha coppie")
+
+    def __repr__(self) -> str:  # pragma: no cover - solo per debug
+        return f"TokenNode({self._path or 'root'}={self._data!r})"
+
+    def to_dict(self) -> Any:
+        """Restituisce i dati Python sottostanti (primitives, dict, list)."""
+        return self._data
 
 
-def _load_tokens() -> dict:
-    """
-    Legge il file design_tokens.json, risolve i riferimenti e popola TOKENS.
-    
-    Returns:
-        dict: Dizionario con i token organizzati per categoria
-        
-    Raises:
-        FileNotFoundError: Se il file design_tokens.json non esiste
-        json.JSONDecodeError: Se il file JSON è malformato
-        KeyError: Se un riferimento non può essere risolto
-    """
-    json_path = Path(__file__).parent / "data" / "design_tokens.json"
-    
-    if not json_path.exists():
+def _is_leaf(value: Any) -> bool:
+    return not isinstance(value, (Mapping, list))
+
+
+def _load_raw_tokens() -> dict:
+    if not TOKEN_JSON_PATH.exists():
         raise FileNotFoundError(
-            f"File design_tokens.json non trovato: {json_path}\n"
+            f"File design_tokens.json non trovato: {TOKEN_JSON_PATH}\n"
             "Assicurati che il file esista in mobility_book_style/data/"
         )
-    
+
     try:
-        with open(json_path, 'r', encoding='utf-8') as f:
-            raw_tokens = json.load(f)
-    except json.JSONDecodeError as e:
+        return json.loads(TOKEN_JSON_PATH.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:  # pragma: no cover - error path
         raise json.JSONDecodeError(
-            f"File design_tokens.json malformato: {e.msg} (linea {e.lineno}, colonna {e.colno})",
-            e.doc,
-            e.pos
+            f"File design_tokens.json malformato: {exc.msg} (linea {exc.lineno}, colonna {exc.colno})",
+            exc.doc,
+            exc.pos,
         )
-    
-    # Risolvi i riferimenti {alias.xxx}
-    resolved = _resolve_references(raw_tokens, ALIAS_COLORS)
-    
+
+
+def _resolve_reference(path_str: str, raw_tree: dict, cache: dict[str, Any]) -> Any:
+    """Risolvi una stringa nel formato {a.b.c}."""
+    ref_match = re.fullmatch(r"\{([^}]+)\}", path_str)
+    if not ref_match:
+        return path_str
+
+    path_parts = ref_match.group(1).split(".")
+    cache_key = "::".join(path_parts)
+    if cache_key in cache:
+        return cache[cache_key]
+
+    current: Any = raw_tree
+    for part in path_parts:
+        current = current[part]
+
+    resolved = _resolve_node(current, raw_tree, cache)
+    cache[cache_key] = resolved
     return resolved
 
 
-# Carica i token dal JSON
-_raw_tokens = _load_tokens()
+def _resolve_node(node: Any, raw_tree: dict, cache: dict[str, Any]) -> Any:
+    if isinstance(node, Mapping):
+        if "value" in node and len(node) >= 1:
+            return _resolve_reference(node["value"], raw_tree, cache)
+        return {k: _resolve_node(v, raw_tree, cache) for k, v in node.items()}
+    if isinstance(node, list):
+        return [_resolve_node(item, raw_tree, cache) for item in node]
+    if isinstance(node, str):
+        return _resolve_reference(node, raw_tree, cache)
+    return node
 
-# Estrai le sezioni principali
-TOKENS = {
-    "font": _raw_tokens.get("font", {}),
-    "color": _raw_tokens.get("color", {}),
-    "chart": _raw_tokens.get("chart", {}),
-    "table": _raw_tokens.get("table", {}),
-    "semantic": _raw_tokens.get("semantic", {}),
-    "components": _raw_tokens.get("components", {}),
-}
 
-# Derivati in pt per Matplotlib/LaTeX
-TOKENS_PT = {
-    "chart": {
-        "title_pt": px_to_pt(TOKENS.get("chart", {}).get("title_size_px", 16)),
-        "label_pt": px_to_pt(TOKENS.get("chart", {}).get("label_size_px", 12)),
-        "tick_pt": px_to_pt(TOKENS.get("chart", {}).get("tick_size_px", 11)),
-        "legend_pt": px_to_pt(TOKENS.get("chart", {}).get("legend_size_px", 11)),
-    },
-    "table": {
-        "title_pt": px_to_pt(TOKENS.get("table", {}).get("title_px", 18)),
-        "subtitle_pt": px_to_pt(TOKENS.get("table", {}).get("subtitle_px", 14)),
-        "header_pt": px_to_pt(TOKENS.get("table", {}).get("header_px", 14)),
-        "units_pt": px_to_pt(TOKENS.get("table", {}).get("units_px", 14)),
-        "body_pt": px_to_pt(TOKENS.get("table", {}).get("body_px", 14)),
-        "logo_pt": px_to_pt(TOKENS.get("table", {}).get("logo_px", 14)),
-        "notes_pt": px_to_pt(TOKENS.get("table", {}).get("notes_px", 12)),
-        "row_1line_pt": px_to_pt(TOKENS.get("table", {}).get("row_1line_px", 34)),
-        "row_2line_pt": px_to_pt(TOKENS.get("table", {}).get("row_2line_px", 51)),
-        "row_3line_pt": px_to_pt(TOKENS.get("table", {}).get("row_3line_px", 60)),
-    },
-}
+def _extract_values(raw_tree: dict) -> dict:
+    cache: dict[str, Any] = {}
+    return _resolve_node(raw_tree, raw_tree, cache)
+
+
+# Carica e prepara i token
+token_raw: dict = _load_raw_tokens()
+token_dict: dict = _extract_values(token_raw)
+token = TokenNode(token_dict)
+
+__all__ = ["token", "token_dict", "token_raw", "TokenNode"]

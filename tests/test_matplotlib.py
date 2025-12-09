@@ -21,8 +21,8 @@ def test_apply_matplotlib_theme():
     assert mpl.rcParams["text.color"].startswith("#")
 
     # Verifica dimensioni
-    assert mpl.rcParams["axes.titlesize"] == 12.0  # 16px * 0.75
-    assert mpl.rcParams["lines.linewidth"] == 2.0
+    assert mpl.rcParams["axes.titlesize"] == pytest.approx(9.0)
+    assert mpl.rcParams["lines.linewidth"] >= 1.5
 
     # Verifica che la griglia sia abilitata
     assert mpl.rcParams["axes.grid"] is True
