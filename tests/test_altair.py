@@ -36,16 +36,16 @@ def test_enable_altair_theme_with_altair():
         mbs.enable_altair_theme()
 
         # Verifica che il tema sia registrato
-        assert "mobility_theme" in alt.themes.names()
+        assert "mobility_theme" in alt.theme.names()
 
         # Verifica che sia attivo
-        active_theme = alt.themes.active
+        active_theme = alt.theme.active
         # Il tema dovrebbe essere 'mobility_theme'
         assert active_theme == "mobility_theme"
 
         # Disabilita e verifica
         mbs.disable_altair_theme()
-        assert alt.themes.active == "default"
+        assert alt.theme.active == "default"
     else:
         pytest.skip("Altair non installato")
 

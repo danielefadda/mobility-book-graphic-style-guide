@@ -58,18 +58,18 @@ def _build_altair_theme():
                 "anchor": "start",
                 "dy": -15,
                 "fontSize": to_px(token.chart.typography.title.fontSize),
-                "font": token.font.family.sans,
+                "font": token.chart.typography.title.fontFamily,
                 "fontWeight": token.chart.typography.title.fontWeight,
                 "frame": "group",
             },
             "axis": {
                 "labelColor": token.chart.typography.label.color,
                 "labelFontSize": to_px(token.chart.typography.label.fontSize),
-                "labelFont": token.font.family.sans,
+                "labelFont": token.chart.typography.label.fontFamily,
                 "labelFontWeight": token.chart.typography.label.fontWeight,
                 "titleColor": token.chart.typography.label.color,
                 "titleFontSize": to_px(token.chart.typography.label.fontSize),
-                "titleFont": token.font.family.sans,
+                "titleFont": token.chart.typography.label.fontFamily,
                 "titleFontWeight": token.chart.typography.title.fontWeight,
                 "grid": True,
                 "gridColor": token.chart.element.grid.color,
@@ -165,9 +165,10 @@ def enable_altair_theme():
             "Altair non è installato. "
             "Installalo con: pip install mobility-book-style[altair]"
         )
-
-    alt.themes.register("mobility_theme", _build_altair_theme)
-    alt.themes.enable("mobility_theme")
+    
+    @alt.theme.register("mobility_theme", enable=True)
+    def custom_theme():
+        return _build_altair_theme()
 
 
 def disable_altair_theme():
@@ -188,4 +189,4 @@ def disable_altair_theme():
         Mobility Book e altri con lo stile default di Altair nella stessa sessione.
     """
     if ALTAIR_AVAILABLE:
-        alt.themes.enable("default")
+        alt.theme.enable("default")
