@@ -52,7 +52,7 @@ def _build_altair_theme():
         "config": {
             "background": token.color.background.default,
             "font": token.font.family.sans,
-            "mark": {"color": token.color.brand.accent},
+            "mark": {"color": token.color.brand.primary},
             "title": {
                 "color": token.chart.typography.title.color,
                 "anchor": "start",
@@ -60,6 +60,7 @@ def _build_altair_theme():
                 "fontSize": to_px(token.chart.typography.title.fontSize),
                 "font": token.font.family.sans,
                 "fontWeight": token.chart.typography.title.fontWeight,
+                "frame": "group",
             },
             "axis": {
                 "labelColor": token.chart.typography.label.color,
@@ -73,20 +74,25 @@ def _build_altair_theme():
                 "grid": True,
                 "gridColor": token.chart.element.grid.color,
                 "labelAngle": 0,
-                "domainWidth": to_px(token.chart.element.axis.width),
+                "domainWidth": to_px(token.chart.element.axis.x.width),
                 "labelPadding": 2,
-                "tickSize": to_px(token.chart.element.tick.length),
                 "tickWidth": to_px(token.chart.element.tick.width),
             },
             "axisX": {
-                "gridDash": [to_px(v) for v in token.chart.element.grid.dash.split()],
-                "gridWidth": to_px(token.chart.element.grid.width) / 2,
-                "gridColor": token.chart.element.grid.color,
+                "grid": False,
+                "ticks": True,
+                "tickSize": to_px(token.chart.element.tick.x.length),
+                "tickWidth": to_px(token.chart.element.tick.x.width),
+                "tickColor": token.chart.element.tick.x.color,
+                "domainWidth": to_px(token.chart.element.axis.x.width),
             },
             "axisY": {
-                "gridDash": [to_px(v) for v in token.chart.element.grid.dash.split()],
-                "gridWidth": to_px(token.chart.element.grid.width) / 2,
+                "grid": True,
+                "gridWidth": to_px(token.chart.element.grid.width),
                 "gridColor": token.chart.element.grid.color,
+                "ticks": False,
+                "tickSize": 0,
+                "domain": False,
             },
             "legend": {
                 "labelFontSize": to_px(token.chart.typography.annotation.fontSize),
@@ -107,8 +113,16 @@ def _build_altair_theme():
             },
             "range": {"category": palette},
             "point": {"filled": True},
-            "line": {"strokeWidth": to_px(token.chart.element.axis.width) * 2},
-            "view": {"stroke": "transparent"},
+            "line": {"strokeWidth": to_px(token.chart.element.axis.x.width) * 2},
+            "view": {
+                "stroke": "transparent",
+                # Dimensioni di default per view in px, usando i token
+                # continuous* per assi quantitativi/continui, discrete* per assi categorici
+                "continuousWidth": to_px(token.component.figure.default.width),
+                "continuousHeight": to_px(token.component.figure.default.height),
+                "discreteWidth": to_px(token.component.figure.default.width),
+                "discreteHeight": to_px(token.component.figure.default.height),
+                },
         }
     }
 

@@ -184,20 +184,35 @@
 
   "chart": {
       "_comment": "Configuration for non-color chart elements",
+      "view": {
+          "background": { "value": "{color.background.default}", "type": "color" },
+          "width": { "value": "{layout.column.width}", "type": "dimension" }
+      },
       "element": {
-          "grid": {
-              "color": { "value": "{color.base.neutral.black}", "type": "color" },
-              "width": { "value": "0.5pt", "type": "dimension" },
-              "dash": { "value": "1pt 3pt", "type": "strokeStyle" }
-          },
-          "axis": {
-              "color": { "value": "{color.base.neutral.black}", "type": "color" },
-              "width": { "value": "0.8pt", "type": "dimension" }
+        "grid": {
+        "color": { "value": "{color.base.neutral.200}", "type": "color" },
+        "width": { "value": "0.8pt", "type": "dimension" }
           },
           "tick": {
+            "x": {
               "color": { "value": "{color.base.neutral.black}", "type": "color" },
               "width": { "value": "0.8pt", "type": "dimension" },
               "length": { "value": "4pt", "type": "dimension" }
+            },
+            "y": {
+              "length": { "value": "0pt", "type": "dimension", "description": "Nasconde le tacchette sull'asse Y" }
+            },
+            "color": { "value": "{color.base.neutral.black}", "type": "color" },
+            "width": { "value": "0.8pt", "type": "dimension" }
+          },
+          "axis": {
+              "x": {
+                "color": { "value": "{color.base.neutral.black}", "type": "color" },
+                "width": { "value": "0.8pt", "type": "dimension" }
+              },
+              "y": {
+                "width": { "value": "0pt", "type": "dimension", "description": "Nasconde l'asse Y" }
+              }
           },
           "spine": {
               "color": { "value": "{color.base.neutral.black}", "type": "color" },
@@ -208,13 +223,13 @@
           "title": {
               "fontFamily": { "value": "{font.family.sans}", "type": "fontFamily" },
               "fontSize": { "value": "{font.size.m}", "type": "dimension" },
-              "fontWeight": { "value": "{font.weight.bold}", "type": "fontWeight" },
+              "fontWeight": { "value": "{font.weight.regular}", "type": "fontWeight" },
               "color": { "value": "{color.text.primary}", "type": "color" }
           },
           "label": {
                "fontFamily": { "value": "{font.family.sans}", "type": "fontFamily" },
-               "fontSize": { "value": "{font.size.s}", "type": "dimension" },
-               "fontWeight": { "value": "{font.weight.regular}", "type": "fontWeight" },
+               "fontSize": { "value": "{font.size.m}", "type": "dimension" },
+               "fontWeight": { "value": "{font.weight.bold}", "type": "fontWeight" },
                "color": { "value": "{color.text.secondary}", "type": "color" }
           },
           "annotation": {

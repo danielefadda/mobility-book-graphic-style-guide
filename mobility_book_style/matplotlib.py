@@ -47,9 +47,13 @@ def apply_matplotlib_theme():
     font_stack = [f.strip() for f in token.font.family.sans.split(",")]
 
     palette = palette_from_numeric_keys(token.color.chart.categorical)
-    grid_dash = parse_dash_pattern(token.chart.element.grid.dash)
+    
+    # Calcola le dimensioni di default della figura dai token
+    fig_width = to_inches(token.component.figure.default.width)
+    fig_height = to_inches(token.component.figure.default.height)
 
     mpl.rcParams.update({
+        "figure.figsize": [fig_width, fig_height],
         "figure.facecolor": token.color.background.default,
         "axes.facecolor": token.color.background.default,
         "savefig.facecolor": token.color.background.default,
@@ -70,26 +74,28 @@ def apply_matplotlib_theme():
 
         "xtick.labelsize": to_pt(token.chart.typography.label.fontSize),
         "ytick.labelsize": to_pt(token.chart.typography.label.fontSize),
-        "xtick.color": token.chart.element.tick.color,
+        "xtick.color": token.chart.element.tick.x.color,
         "ytick.color": token.chart.element.tick.color,
-        "xtick.major.size": to_pt(token.chart.element.tick.length),
-        "ytick.major.size": to_pt(token.chart.element.tick.length),
-        "xtick.major.width": to_pt(token.chart.element.tick.width),
+        "xtick.major.size": to_pt(token.chart.element.tick.x.length),
+        "ytick.major.size": 0,  # Nasconde le tacchette sull'asse Y
+        "xtick.major.width": to_pt(token.chart.element.tick.x.width),
         "ytick.major.width": to_pt(token.chart.element.tick.width),
 
         "axes.spines.top": False,
         "axes.spines.right": False,
+        "axes.spines.left": False,  # Nasconde l'asse Y
         "axes.linewidth": to_pt(token.chart.element.spine.width),
         "axes.edgecolor": token.chart.element.spine.color,
 
         "axes.grid": True,
+        "axes.grid.axis": "y",  # Solo linee orizzontali (asse Y)
         "axes.axisbelow": True,
         "grid.color": token.chart.element.grid.color,
         "grid.linewidth": to_pt(token.chart.element.grid.width),
-        "grid.linestyle": grid_dash,
+        "grid.linestyle": "-",  # Linea continua
         "grid.alpha": 1.0,
 
-        "lines.linewidth": max(1.5, to_pt(token.chart.element.axis.width) * 2.0),
+        "lines.linewidth": max(1.5, to_pt(token.chart.element.axis.x.width) * 2.0),
         "lines.solid_capstyle": "round",
         "axes.prop_cycle": cycler(color=palette),
 
