@@ -70,6 +70,11 @@ def _build_altair_theme():
             "background": token.color.background.default,
             "font": token.font.family.sans,
             "mark": {"color": token.color.brand.primary},
+            "rect": {
+                "stroke": token.cartography.heatmap.cell.stroke,
+                "strokeWidth": to_px(token.cartography.heatmap.cell.strokeWidth),
+                "cornerRadius": to_px(token.cartography.heatmap.cell.cornerRadius),
+            },
             "title": {
                 "color": token.chart.typography.title.color,
                 "anchor": "start",
@@ -273,3 +278,34 @@ def get_color_scale(scale_name: str) -> list:
         return palette_from_numeric_keys(token.color.chart.divergent)
     else:
         return _sequential_scales.get(scale_name, [])
+
+
+def get_heatmap_axis_config() -> dict:
+    """
+    Restituisce una configurazione axis (x, y) per heatmap basata sui design tokens.
+
+    Returns:
+        dict: Dizionario con chiavi 'x', 'y' (Axis config) e 'legend_orient'.
+
+    Esempio:
+        >>> cfg = mbs.get_heatmap_axis_config()
+        >>> heatmap = alt.Chart(df).mark_rect().encode(
+        ...   x=alt.X('X:O', axis=alt.Axis(**cfg['x'])),
+        ...   y=alt.Y('Y:O', axis=alt.Axis(**cfg['y']))
+        ... ).configure_legend(orient=cfg['legend_orient'])
+    """
+    x = {
+        "labelAngle": int(token.chart.heatmap.axis.x.labelAngle),
+        "ticks": bool(token.chart.heatmap.axis.x.ticks),
+        "domain": bool(token.chart.heatmap.axis.x.domain),
+        "labelFontSize": to_px(token.chart.heatmap.axis.x.labelFontSize),
+        "labelExpr": token.chart.heatmap.axis.x.labelExprEven,
+    }
+    y = {
+        "ticks": bool(token.chart.heatmap.axis.y.ticks),
+        "domain": bool(token.chart.heatmap.axis.y.domain),
+        "labelFontSize": to_px(token.chart.heatmap.axis.y.labelFontSize),
+        "labelExpr": token.chart.heatmap.axis.y.labelExprEven,
+    }
+    legend_orient = token.chart.heatmap.legend.orient
+    return {"x": x, "y": y, "legend_orient": legend_orient}

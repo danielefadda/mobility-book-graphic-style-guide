@@ -277,6 +277,26 @@
 
   "chart": {
       "_comment": "Configuration for non-color chart elements",
+      "heatmap": {
+        "axis": {
+          "x": {
+            "labelAngle": { "value": "-90", "type": "number" },
+            "ticks": { "value": "false", "type": "boolean" },
+            "domain": { "value": "false", "type": "boolean" },
+            "labelFontSize": { "value": "8pt", "type": "dimension" },
+            "labelExprEven": { "value": "datum.value % 2 == 0 ? datum.label : ''", "type": "string" }
+          },
+          "y": {
+            "ticks": { "value": "false", "type": "boolean" },
+            "domain": { "value": "false", "type": "boolean" },
+            "labelFontSize": { "value": "8pt", "type": "dimension" },
+            "labelExprEven": { "value": "datum.value % 2 == 0 ? datum.label : ''", "type": "string" }
+          }
+        },
+        "legend": {
+          "orient": { "value": "bottom", "type": "string" }
+        }
+      },
       "view": {
           "background": { "value": "{color.background.default}", "type": "color" },
           "width": { "value": "{layout.column.width}", "type": "dimension" }
@@ -362,6 +382,13 @@
       "local": {
         "fill": { "value": "{color.base.slate.500}", "type": "color" },
         "width": { "value": "0.5pt", "type": "dimension" }
+      }
+    },
+    "heatmap": {
+      "cell": {
+        "stroke": { "value": "{color.base.neutral.white}", "type": "color", "description": "Bordo delle celle per migliorare leggibilità" },
+        "strokeWidth": { "value": "0.6pt", "type": "dimension", "description": "Spessore bordo celle" },
+        "cornerRadius": { "value": "0pt", "type": "dimension", "description": "Raggio angoli celle" }
       }
     }
   },
