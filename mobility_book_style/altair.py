@@ -32,6 +32,10 @@ from ._tokens import token
 from .utils import to_px, palette_from_numeric_keys
 
 
+# Esponi le scale personalizzate a livello di modulo
+_sequential_scales = {}
+
+
 def _build_altair_theme():
     """
     Costruisce la configurazione del tema Altair dai design tokens.
@@ -46,7 +50,20 @@ def _build_altair_theme():
         Altair/Vega-Lite usa pixel CSS, quindi tutti i valori in pt dai token
         vengono convertiti in px usando to_px().
     """
-    palette = palette_from_numeric_keys(token.color.chart.categorical)
+    categorical = palette_from_numeric_keys(token.color.chart.categorical)
+    divergent = palette_from_numeric_keys(token.color.chart.divergent)
+    
+    # Scale sequenziali personalizzate
+    global _sequential_scales
+    _sequential_scales = {
+        "teal": palette_from_numeric_keys(token.color.chart.sequential.teal),
+        "burgundy": palette_from_numeric_keys(token.color.chart.sequential.burgundy),
+        "neutral": palette_from_numeric_keys(token.color.chart.sequential.neutral),
+        "purple": palette_from_numeric_keys(token.color.chart.sequential.purple),
+        "olive": palette_from_numeric_keys(token.color.chart.sequential.olive),
+        "gold": palette_from_numeric_keys(token.color.chart.sequential.gold),
+        "rust": palette_from_numeric_keys(token.color.chart.sequential.rust),
+    }
 
     return {
         "config": {
@@ -111,7 +128,21 @@ def _build_altair_theme():
                     "fill": token.chart.typography.label.color,
                 },
             },
-            "range": {"category": palette},
+            "range": {
+                "category": categorical,
+                "diverging": divergent,
+                "ordinal": _sequential_scales["teal"],
+                "ramp": _sequential_scales["teal"],
+                "heatmap": _sequential_scales["teal"],
+                # Named scales for explicit use
+                "teal": _sequential_scales["teal"],
+                "burgundy": _sequential_scales["burgundy"],
+                "neutral": _sequential_scales["neutral"],
+                "purple": _sequential_scales["purple"],
+                "olive": _sequential_scales["olive"],
+                "gold": _sequential_scales["gold"],
+                "rust": _sequential_scales["rust"],
+            },
             "point": {
                 "filled": True,
                 "size": (to_px(token.chart.data.line.markerSize)*1.3) ** 2,  # Altair usa area, non raggio
@@ -197,3 +228,48 @@ def disable_altair_theme():
     """
     if ALTAIR_AVAILABLE:
         alt.theme.enable("default")
+
+
+def get_color_scale(scale_name: str) -> list:
+    """
+    Ottiene una scala di colori personalizzata dal tema Mobility Book.
+    
+    Args:
+        scale_name: Nome della scala ('teal', 'burgundy', 'neutral', 'purple', 
+                   'olive', 'gold', 'rust', 'categorical', 'divergent')
+    
+    Returns:
+        Lista di colori hex per la scala richiesta
+        
+    Raises:
+        ValueError: Se il nome della scala non è valido
+        
+    Esempio:
+        >>> import mobility_book_style as mbs
+        >>> import altair as alt
+        >>> 
+        >>> mbs.enable_altair_theme()
+        >>> rust_colors = mbs.get_color_scale('rust')
+        >>> 
+        >>> # Usa nella chart
+        >>> chart = alt.Chart(data).mark_rect().encode(
+        ...     color=alt.Color('value:Q', scale=alt.Scale(range=rust_colors))
+        ... )
+    
+    Note:
+        È necessario aver chiamato enable_altair_theme() prima di usare questa funzione.
+    """
+    valid_scales = list(_sequential_scales.keys()) + ['categorical', 'divergent']
+    
+    if scale_name not in valid_scales:
+        raise ValueError(
+            f"Scale '{scale_name}' non valida. "
+            f"Scegli tra: {', '.join(valid_scales)}"
+        )
+    
+    if scale_name == 'categorical':
+        return palette_from_numeric_keys(token.color.chart.categorical)
+    elif scale_name == 'divergent':
+        return palette_from_numeric_keys(token.color.chart.divergent)
+    else:
+        return _sequential_scales.get(scale_name, [])

@@ -39,7 +39,7 @@ __author__ = "Daniele Fadda"
 # API pubblica principale
 from ._tokens import token
 from .matplotlib import apply_matplotlib_theme, style_table
-from .altair import enable_altair_theme, disable_altair_theme
+from .altair import enable_altair_theme, disable_altair_theme, get_color_scale
 from .export import export_ase, export_colors_dict
 
 __all__ = [
@@ -48,6 +48,7 @@ __all__ = [
     "style_table",
     "enable_altair_theme",
     "disable_altair_theme",
+    "get_color_scale",
     "export_ase",
     "export_colors_dict",
 ]
