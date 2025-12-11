@@ -70,7 +70,7 @@ def _build_altair_theme():
                 "titleColor": token.chart.typography.label.color,
                 "titleFontSize": to_px(token.chart.typography.label.fontSize),
                 "titleFont": token.chart.typography.label.fontFamily,
-                "titleFontWeight": token.chart.typography.title.fontWeight,
+                "titleFontWeight": token.chart.typography.label.fontWeight,
                 "grid": True,
                 "gridColor": token.chart.element.grid.color,
                 "labelAngle": 0,
@@ -112,8 +112,15 @@ def _build_altair_theme():
                 },
             },
             "range": {"category": palette},
-            "point": {"filled": True},
-            "line": {"strokeWidth": to_px(token.chart.element.axis.x.width) * 2},
+            "point": {
+                "filled": True,
+                "size": (to_px(token.chart.data.line.markerSize)*1.3) ** 2,  # Altair usa area, non raggio
+            },
+            "line": {
+                "strokeWidth": to_px(token.chart.data.line.width),
+                "strokeCap": token.chart.data.line.capStyle,
+                "strokeJoin": token.chart.data.line.joinStyle,
+            },
             "view": {
                 "stroke": "transparent",
                 # Dimensioni di default per view in px, usando i token

@@ -188,6 +188,14 @@
           "background": { "value": "{color.background.default}", "type": "color" },
           "width": { "value": "{layout.column.width}", "type": "dimension" }
       },
+      "data": {
+          "line": {
+              "width": { "value": "1.5pt", "type": "dimension" },
+              "joinStyle": { "value": "round", "type": "string", "description": "Rende le curve spezzate più morbide" },
+              "capStyle": { "value": "round", "type": "string", "description": "Arrotonda le punte delle linee" },
+              "markerSize" : { "value": "4pt", "type":"dimension", "description": "marker size in points"}
+            }
+      },
       "element": {
         "grid": {
           "color": { "value": "{color.base.neutral.200}", "type": "color" },
@@ -230,13 +238,19 @@
                "fontFamily": { "value": "{font.family.sans}", "type": "fontFamily" },
                "fontSize": { "value": "{font.size.m}", "type": "dimension" },
                "fontWeight": { "value": "{font.weight.regular}", "type": "fontWeight" },
-               "color": { "value": "{color.text.secondary}", "type": "color" }
+               "color": { "value": "{color.text.primary}", "type": "color" }
           },
           "annotation": {
                "fontFamily": { "value": "{font.family.sans}", "type": "fontFamily" },
                "fontSize": { "value": "{font.size.xs}", "type": "dimension" },
-               "fontWeight": { "value": "{font.weight.medium}", "type": "fontWeight" },
-               "color": { "value": "{color.text.secondary}", "type": "color" }
+               "fontWeight": { "value": "{font.weight.regular}", "type": "fontWeight" },
+               "color": { "value": "{color.text.primary}", "type": "color" }
+          },
+          "tickLabel": {
+               "fontFamily": { "value": "{font.family.sans}", "type": "fontFamily" },
+               "fontSize": { "value": "{font.size.s}", "type": "dimension" },
+               "fontWeight": { "value": "{font.weight.regular}", "type": "fontWeight" },
+               "color": { "value": "{color.text.primary}", "type": "color" }
           }
       }
   },

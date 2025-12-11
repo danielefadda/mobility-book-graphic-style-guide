@@ -72,8 +72,8 @@ def apply_matplotlib_theme():
         "axes.labelcolor": token.chart.typography.label.color,
         "axes.labelpad": 8,
 
-        "xtick.labelsize": to_pt(token.chart.typography.label.fontSize),
-        "ytick.labelsize": to_pt(token.chart.typography.label.fontSize),
+        "xtick.labelsize": to_pt(token.chart.typography.tickLabel.fontSize),
+        "ytick.labelsize": to_pt(token.chart.typography.tickLabel.fontSize),
         "xtick.color": token.chart.element.tick.x.color,
         "ytick.color": token.chart.element.tick.color,
         "xtick.major.size": to_pt(token.chart.element.tick.x.length),
@@ -95,8 +95,10 @@ def apply_matplotlib_theme():
         "grid.linestyle": "-",  # Linea continua
         "grid.alpha": 1.0,
 
-        "lines.linewidth": max(1.5, to_pt(token.chart.element.axis.x.width) * 2.0),
-        "lines.solid_capstyle": "round",
+        "lines.linewidth": to_pt(token.chart.data.line.width),
+        "lines.solid_capstyle": token.chart.data.line.joinStyle,
+        "lines.markersize" : to_pt(token.chart.data.line.markerSize),
+        "lines.color": token.color.brand.primary,
         "axes.prop_cycle": cycler(color=palette),
 
         "legend.fontsize": to_pt(token.chart.typography.annotation.fontSize),
