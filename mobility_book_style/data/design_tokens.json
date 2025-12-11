@@ -281,7 +281,7 @@
         "grid": { "value": "false", "type": "boolean" },
         "axis": {
           "x": {
-            "labelAngle": { "value": "-90", "type": "number" },
+            "labelAngle": { "value": "0", "type": "number" },
             "ticks": { "value": "false", "type": "boolean" },
             "domain": { "value": "false", "type": "boolean" },
             "labelFontSize": { "value": "{font.size.s}", "type": "dimension" }
