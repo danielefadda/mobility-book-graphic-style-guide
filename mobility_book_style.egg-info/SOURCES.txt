@@ -20,6 +20,7 @@ docs/js/grayscale.js
 docs/js/jquery.easing.min.js
 docs/js/jquery.js
 docs/js/less.min.js
+examples/demo_advanced.ipynb
 examples/demo_new_api.ipynb
 mobility_book_style/__init__.py
 mobility_book_style/_tokens.py

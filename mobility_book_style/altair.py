@@ -294,18 +294,27 @@ def get_heatmap_axis_config() -> dict:
         ...   y=alt.Y('Y:O', axis=alt.Axis(**cfg['y']))
         ... ).configure_legend(orient=cfg['legend_orient'])
     """
+    def _to_bool(val):
+        if isinstance(val, bool):
+            return val
+        if isinstance(val, str):
+            return val.strip().lower() in {"true", "1", "yes", "y"}
+        return bool(val)
+
+    grid = _to_bool(token.chart.heatmap.grid)
+    
     x = {
         "labelAngle": int(token.chart.heatmap.axis.x.labelAngle),
-        "ticks": bool(token.chart.heatmap.axis.x.ticks),
-        "domain": bool(token.chart.heatmap.axis.x.domain),
+        "ticks": _to_bool(token.chart.heatmap.axis.x.ticks),
+        "domain": _to_bool(token.chart.heatmap.axis.x.domain),
         "labelFontSize": to_px(token.chart.heatmap.axis.x.labelFontSize),
-        "labelExpr": token.chart.heatmap.axis.x.labelExprEven,
+        "grid": grid,
     }
     y = {
-        "ticks": bool(token.chart.heatmap.axis.y.ticks),
-        "domain": bool(token.chart.heatmap.axis.y.domain),
+        "ticks": _to_bool(token.chart.heatmap.axis.y.ticks),
+        "domain": _to_bool(token.chart.heatmap.axis.y.domain),
         "labelFontSize": to_px(token.chart.heatmap.axis.y.labelFontSize),
-        "labelExpr": token.chart.heatmap.axis.y.labelExprEven,
+        "grid": grid,
     }
     legend_orient = token.chart.heatmap.legend.orient
     return {"x": x, "y": y, "legend_orient": legend_orient}

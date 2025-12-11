@@ -278,19 +278,18 @@
   "chart": {
       "_comment": "Configuration for non-color chart elements",
       "heatmap": {
+        "grid": { "value": "false", "type": "boolean" },
         "axis": {
           "x": {
             "labelAngle": { "value": "-90", "type": "number" },
             "ticks": { "value": "false", "type": "boolean" },
             "domain": { "value": "false", "type": "boolean" },
-            "labelFontSize": { "value": "8pt", "type": "dimension" },
-            "labelExprEven": { "value": "datum.value % 2 == 0 ? datum.label : ''", "type": "string" }
+            "labelFontSize": { "value": "{font.size.s}", "type": "dimension" }
           },
           "y": {
             "ticks": { "value": "false", "type": "boolean" },
             "domain": { "value": "false", "type": "boolean" },
-            "labelFontSize": { "value": "8pt", "type": "dimension" },
-            "labelExprEven": { "value": "datum.value % 2 == 0 ? datum.label : ''", "type": "string" }
+            "labelFontSize": { "value": "{font.size.s}", "type": "dimension" }
           }
         },
         "legend": {
