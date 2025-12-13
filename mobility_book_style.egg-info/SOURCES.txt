@@ -21,6 +21,7 @@ docs/js/jquery.easing.min.js
 docs/js/jquery.js
 docs/js/less.min.js
 examples/demo_advanced.ipynb
+examples/demo_heatmap.ipynb
 examples/demo_new_api.ipynb
 examples/test_altair_title.ipynb
 examples/test_font_injection.ipynb
