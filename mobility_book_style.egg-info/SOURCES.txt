@@ -22,6 +22,8 @@ docs/js/jquery.js
 docs/js/less.min.js
 examples/demo_advanced.ipynb
 examples/demo_new_api.ipynb
+examples/test_altair_title.ipynb
+examples/test_font_injection.ipynb
 mobility_book_style/__init__.py
 mobility_book_style/_tokens.py
 mobility_book_style/altair.py

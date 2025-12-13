@@ -66,19 +66,44 @@ def test_altair_theme_config():
 
         # Verifica che i colori siano stati impostati
         assert theme["config"]["background"].upper() == "#FFFFFF"
-        assert "Inter 18pt" in theme["config"]["font"]
+        assert "Inter" in theme["config"]["font"]
     else:
         pytest.skip("Altair non installato")
 
 
 def test_altair_font_css_inline():
-    """Verifica che il CSS inline includa Inter 18pt."""
+    """Verifica che il CSS inline includa Inter (senza '18pt' per evitare confusione)."""
     import mobility_book_style.altair as alt_module
 
     css = alt_module.get_altair_font_css()
-    assert "Inter 18pt" in css
+    assert "font-family: 'Inter'" in css
     assert "@font-face" in css
 
     embed_opts = alt_module.altair_embed_options_with_inter()
     assert "defaultStyle" in embed_opts
-    assert "Inter 18pt" in embed_opts["defaultStyle"]
+    assert "font-family: 'Inter'" in embed_opts["defaultStyle"]
+
+def test_altair_css_injection_in_html():
+    """Verifica che il CSS @font-face sia iniettato nel HTML generato da to_html()."""
+    import mobility_book_style.altair as alt_module
+
+    if alt_module.ALTAIR_AVAILABLE:
+        import altair as alt
+        import mobility_book_style as mbs
+
+        # Abilita il tema (che applica il monkey-patch)
+        mbs.enable_altair_theme()
+
+        # Crea un semplice chart
+        data = alt.Data(values=[{"x": "A", "y": 10}, {"x": "B", "y": 20}])
+        chart = alt.Chart(data).mark_bar().encode(x="x:N", y="y:Q")
+
+        # Genera HTML
+        html = chart.to_html()
+
+        # Verifica che il CSS sia presente
+        assert "@font-face" in html, "CSS @font-face non trovato nel HTML"
+        assert "font-family: 'Inter'" in html, "Font Inter non trovato nel HTML"
+        assert "data:font/ttf;base64," in html, "Data URI dei font non trovato nel HTML"
+    else:
+        pytest.skip("Altair non installato")

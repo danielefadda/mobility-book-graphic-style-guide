@@ -47,16 +47,17 @@ def _encode_font_as_data_uri(font_path: Path) -> str:
 
 
 def get_altair_font_css() -> str:
-    """Restituisce il CSS @font-face per Inter 18pt (regular/italic/bold/bold italic).
+    """Restituisce il CSS @font-face per Inter (dai file Inter_18pt).
 
     Il CSS usa data URI per incorporare i TTF direttamente nell'HTML esportato.
+    Nota: Il font-family è 'Inter' (senza '18pt') per evitare confusione nel rendering.
     """
 
     faces = [
-        ("Inter 18pt", "normal", "400", "Inter_18pt-Regular.ttf"),
-        ("Inter 18pt", "italic", "400", "Inter_18pt-Italic.ttf"),
-        ("Inter 18pt", "normal", "700", "Inter_18pt-Bold.ttf"),
-        ("Inter 18pt", "italic", "700", "Inter_18pt-BoldItalic.ttf"),
+        ("Inter", "normal", "400", "Inter_18pt-Regular.ttf"),
+        ("Inter", "italic", "400", "Inter_18pt-Italic.ttf"),
+        ("Inter", "normal", "700", "Inter_18pt-Bold.ttf"),
+        ("Inter", "italic", "700", "Inter_18pt-BoldItalic.ttf"),
     ]
 
     blocks: list[str] = []
@@ -103,6 +104,10 @@ def _build_altair_theme():
     """
     categorical = palette_from_numeric_keys(token.color.chart.categorical)
     divergent = palette_from_numeric_keys(token.color.chart.divergent)
+
+    # Font stack per Altair: usa 'Inter' (non 'Inter 18pt') per evitare
+    # confusione nel rendering quando si specifica fontSize esplicito
+    altair_font_stack = "Inter, serif"
     
     # Scale sequenziali personalizzate
     global _sequential_scales
@@ -119,7 +124,7 @@ def _build_altair_theme():
     return {
         "config": {
             "background": token.color.background.default,
-            "font": token.font.family.sans,
+            "font": altair_font_stack,
             "mark": {"color": token.color.brand.primary},
             "rect": {
                 "stroke": token.cartography.heatmap.cell.stroke,
@@ -130,20 +135,21 @@ def _build_altair_theme():
                 "color": token.chart.typography.title.color,
                 "anchor": "start",
                 "dy": -15,
-                "fontSize": to_px(token.chart.typography.title.fontSize),
-                "font": token.chart.typography.title.fontFamily,
-                "fontWeight": token.chart.typography.title.fontWeight,
+                # "fontSize": to_px(token.chart.typography.title.fontSize),
+                "font": altair_font_stack,
+                # Vega-Lite si aspetta un numero per fontWeight; garantiamo int
+                "fontWeight": int(token.chart.typography.title.fontWeight),
                 "frame": "group",
             },
             "axis": {
                 "labelColor": token.chart.typography.label.color,
                 "labelFontSize": to_px(token.chart.typography.label.fontSize),
-                "labelFont": token.chart.typography.label.fontFamily,
-                "labelFontWeight": token.chart.typography.label.fontWeight,
+                "labelFont": altair_font_stack,
+                "labelFontWeight": int(token.chart.typography.label.fontWeight),
                 "titleColor": token.chart.typography.label.color,
                 "titleFontSize": to_px(token.chart.typography.label.fontSize),
-                "titleFont": token.chart.typography.label.fontFamily,
-                "titleFontWeight": token.chart.typography.label.fontWeight,
+                "titleFont": altair_font_stack,
+                "titleFontWeight": int(token.chart.typography.label.fontWeight),
                 "grid": True,
                 "gridColor": token.chart.element.grid.color,
                 "labelAngle": 0,
@@ -171,16 +177,16 @@ def _build_altair_theme():
                 "labelFontSize": to_px(token.chart.typography.annotation.fontSize),
                 "padding": 1,
                 "symbolType": "square",
-                "labelFont": token.font.family.sans,
-                "titleFont": token.font.family.sans,
+                "labelFont": altair_font_stack,
+                "titleFont": altair_font_stack,
             },
             "style": {
                 "guide-label": {
-                    "font": token.font.family.sans,
+                    "font": altair_font_stack,
                     "fill": token.chart.typography.label.color,
                 },
                 "guide-title": {
-                    "font": token.font.family.sans,
+                    "font": altair_font_stack,
                     "fill": token.chart.typography.label.color,
                 },
             },
@@ -219,6 +225,32 @@ def _build_altair_theme():
                 },
         }
     }
+
+
+def _inject_font_css_into_html(html: str) -> str:
+    """
+    Inietta il CSS @font-face Inter nel HTML generato da Altair.
+    
+    Aggiunge il CSS personalizzato dei font nel tag <style> dell'HTML,
+    permettendo ai chart di usare il font Inter senza dipendenze esterne.
+    
+    Args:
+        html: Stringa HTML generata da Altair
+    
+    Returns:
+        HTML con CSS @font-face aggiunto nel tag <style>
+    """
+    css = get_altair_font_css()
+    if not css:
+        return html
+    
+    # Trova il tag </style> e inserisci il CSS prima di esso
+    style_end = html.find("</style>")
+    if style_end != -1:
+        # Inserisci il CSS prima del </style>
+        return html[:style_end] + "\n    " + css + "\n  " + html[style_end:]
+    
+    return html
 
 
 def enable_altair_theme():
@@ -268,12 +300,33 @@ def enable_altair_theme():
     # In questo modo i grafici inline e gli export HTML includono il font senza
     # codice aggiuntivo nel notebook.
     try:
+        # Assicura renderer HTML e embed options con CSS dei font
+        alt.renderers.enable("default")
         css_opts = altair_embed_options_with_inter()
         if css_opts:
             alt.renderers.set_embed_options(**css_opts)
     except Exception:
         # Non bloccare l'attivazione del tema se l'embed option fallisce
         pass
+    
+    # WORKAROUND: Monkey-patch Chart.to_html() per iniettare CSS
+    # Questo è necessario perché set_embed_options non inietta il CSS direttamente
+    # in to_html(), ma solo nel rendering via vega-embed JavaScript.
+    if hasattr(alt.Chart, '_original_to_html'):
+        # Già patchato, non patchare di nuovo
+        return
+    
+    # Patch to_html() - usato da .save() e da altri renderer
+    original_to_html = alt.Chart.to_html
+    
+    def patched_to_html(self, *args, **kwargs):
+        """Versione patchata di to_html che inietta il CSS dei font."""
+        html = original_to_html(self, *args, **kwargs)
+        return _inject_font_css_into_html(html)
+    
+    # Salva il metodo originale e rimpiazzalo
+    alt.Chart._original_to_html = original_to_html
+    alt.Chart.to_html = patched_to_html
 
 
 def disable_altair_theme():
