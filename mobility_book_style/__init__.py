@@ -40,6 +40,7 @@ __author__ = "Daniele Fadda"
 from ._tokens import token
 from .matplotlib import apply_matplotlib_theme, style_table
 from .export import export_ase, export_colors_dict
+from . import theme
 
 # Nota: avvolgiamo le funzioni Altair in semplici wrapper per ricaricare
 # il modulo altair interno prima di abilitarne il tema. In questo modo
@@ -84,6 +85,7 @@ def altair_embed_options_with_inter() -> dict:
 
 __all__ = [
     "token",
+    "theme",
     "apply_matplotlib_theme",
     "style_table",
     "enable_altair_theme",
