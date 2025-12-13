@@ -302,3 +302,6 @@ def palette_from_numeric_keys(mapping: dict) -> list:
         return [mapping[k] for k in sorted(mapping, key=lambda v: int(v))]
     except Exception:
         return list(mapping.values())
+
+
+

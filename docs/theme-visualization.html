@@ -113,6 +113,11 @@
             box-shadow: 0 4px 12px rgba(52, 139, 150, 0.2);
         }
         
+        .color-item.primary-500 .color-box {
+            border: 3px solid #000;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
         .color-code {
             font-size: 11px;
             color: #666;
@@ -234,6 +239,52 @@
             opacity: 1;
         }
         
+        .fonts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .font-section {
+            background: #f9f9f9;
+            border-radius: 8px;
+            padding: 15px;
+        }
+        
+        .font-section-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: #348b96;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+            letter-spacing: 0.5px;
+        }
+        
+        .font-item {
+            margin-bottom: 12px;
+            padding: 10px;
+            background: white;
+            border-radius: 4px;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .font-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .font-name {
+            font-size: 13px;
+            font-weight: 500;
+            color: #262A33;
+            margin-bottom: 4px;
+        }
+        
+        .font-code {
+            font-size: 11px;
+            color: #999;
+            font-family: 'Courier New', monospace;
+        }
+        
         footer {
             text-align: center;
             margin-top: 50px;
@@ -301,6 +352,15 @@
             <div id="sequences-container"></div>
         </div>
         
+        <!-- FONT -->
+        <div class="theme-section">
+            <div class="section-title">
+                <span>🔤</span>
+                Typography
+            </div>
+            <div id="fonts-container"></div>
+        </div>
+        
         <footer>
             <p class="footer-text">Mobility Book Graphic Style Guide</p>
             <p class="footer-text">Generated from design tokens • Auto-updates on token changes</p>
@@ -308,25 +368,27 @@
     </div>
     
     <script>
-        const palettes = {"neutral": ["#f5f5f5", "#e0e0e0"], "teal": ["#a4f8ff", "#8ee2ed", "#77cbd7", "#61b5c0", "#4ba0ab", "#348b96", "#187681", "#00626d", "#004f59", "#003c46", "#002a34"], "burgundy": ["#e5647e", "#d55671", "#c54864", "#b63a58", "#a72b4b", "#981a40", "#880134", "#790029", "#6b001e", "#5c0013", "#4d0009"], "purple": ["#9694df", "#8885cf", "#7a77c0", "#6d69b1", "#5f5ba1", "#534e93", "#464084", "#3a3375", "#2f2667", "#241959", "#1a0a4b"], "olive": ["#e5ecC5", "#d6ddb1", "#c8ce9d", "#bcc08a", "#aeb177", "#a0a369", "#939761", "#858852", "#777a43", "#6a6c34", "#5d5f26"], "gold": ["#fff865", "#ffe952", "#ffd93f", "#f9ca2d", "#e8ba1a", "#d5aa00", "#b29700", "#a08700", "#8e7800", "#7c6900", "#6b5a00"], "slate": ["#e1d7ec", "#ccc2d6", "#b7adc1", "#a299ac", "#8e8597", "#7b7284", "#676377", "#5b566b", "#4f4b5f", "#443f53", "#393447"], "rust": ["#ffc78a", "#ffb579", "#ffa468", "#fa9357", "#e88346", "#d67335", "#c46221", "#b25205", "#a04200", "#8f3200", "#7e2100"], "special": []};
+        const palettes = {"neutral": ["#f5f5f5", "#e0e0e0"], "teal": ["#a4f8ff", "#8ee2ed", "#77cbd7", "#61b5c0", "#4ba0ab", "#348b96", "#187681", "#00626d", "#004f59", "#003c46", "#002a34"], "burgundy": ["#e5647e", "#d55671", "#c54864", "#b63a58", "#a72b4b", "#981a40", "#880134", "#790029", "#6b001e", "#5c0013", "#4d0009"], "purple": ["#9694df", "#8885cf", "#7a77c0", "#6d69b1", "#5f5ba1", "#534e93", "#464084", "#3a3375", "#2f2667", "#241959", "#1a0a4b"], "olive": ["#e5ecC5", "#d6ddb1", "#c8ce9d", "#bcc08a", "#aeb177", "#a0a369", "#939761", "#858852", "#777a43", "#6a6c34", "#5d5f26"], "gold": ["#fff865", "#ffe952", "#ffd93f", "#f9ca2d", "#e8ba1a", "#d5aa00", "#b29700", "#a08700", "#8e7800", "#7c6900", "#6b5a00"], "slate": ["#e1d7ec", "#ccc2d6", "#b7adc1", "#a299ac", "#8e8597", "#7b7284", "#676377", "#5b566b", "#4f4b5f", "#443f53", "#393447"], "rust": ["#ffc78a", "#ffb579", "#ffa468", "#fa9357", "#e88346", "#d67335", "#c46221", "#b25205", "#a04200", "#8f3200", "#7e2100"]};
         const semantics = {"brand": {"primary": "#348b96", "accent": "#981a40"}, "intent": {"exercise": "#348b96", "definition": "#7b7284", "curiosity": "#0f5499", "warning": "#d67335"}, "text": {"primary": "#348b96", "secondary": "#5b566b", "link": "#981a40"}, "background": {"default": "#ffffff", "alternative": "#fff1e6"}};
         const sequences = {"sequential_teal": ["#a4f8ff", "#8ee2ed", "#77cbd7", "#61b5c0", "#4ba0ab", "#348b96", "#187681", "#00626d", "#004f59", "#003c46", "#002a34"], "sequential_burgundy": ["#e5647e", "#d55671", "#c54864", "#b63a58", "#a72b4b", "#981a40", "#880134", "#790029", "#6b001e", "#5c0013", "#4d0009"], "sequential_neutral": ["#ffffff", "#f5f5f5", "#e0e0e0", "#ccc2d6", "#b7adc1", "#a299ac", "#8e8597", "#7b7284", "#5b566b", "#4f4b5f", "#443f53"], "sequential_purple": ["#9694df", "#8885cf", "#7a77c0", "#6d69b1", "#5f5ba1", "#534e93", "#464084", "#3a3375", "#2f2667", "#241959", "#1a0a4b"], "sequential_olive": ["#e5ecC5", "#d6ddb1", "#c8ce9d", "#bcc08a", "#aeb177", "#a0a369", "#939761", "#858852", "#777a43", "#6a6c34", "#5d5f26"], "sequential_gold": ["#fff865", "#ffe952", "#ffd93f", "#f9ca2d", "#e8ba1a", "#d5aa00", "#b29700", "#a08700", "#8e7800", "#7c6900", "#6b5a00"], "sequential_rust": ["#ffc78a", "#ffb579", "#ffa468", "#fa9357", "#e88346", "#d67335", "#c46221", "#b25205", "#a04200", "#8f3200", "#7e2100"]};
+        const fonts = {"families": ["sans", "mono"], "sizes": ["xs", "s", "m", "l", "xl", "xxl"], "weights": ["regular", "medium", "bold"]};
         
         // Renderizza palette
         function renderPalettes() {
             let html = '';
             for (const [name, colors] of Object.entries(palettes)) {
-                html += `<div class="palette-section">
-                    <span class="palette-name">${name}</span>
-                    <div class="palette-grid">`;
-                colors.forEach(color => {
-                    html += `
-                        <div class="color-item" title="Click to copy">
-                            <div class="color-box" style="background-color: ${color};"></div>
-                            <div class="color-code">${color}</div>
-                        </div>`;
+                html += '<div class="palette-section">';
+                html += '<span class="palette-name">' + name + '</span>';
+                html += '<div class="palette-grid">';
+                colors.forEach((color, idx) => {
+                    const isPrimary = idx === 5;
+                    const itemClass = isPrimary ? 'color-item primary-500' : 'color-item';
+                    html += '<div class="' + itemClass + '" title="Click to copy">';
+                    html += '<div class="color-box" style="background-color: ' + color + ';"></div>';
+                    html += '<div class="color-code">' + color + '</div>';
+                    html += '</div>';
                 });
-                html += `</div></div>`;
+                html += '</div></div>';
             }
             document.getElementById('palettes-container').innerHTML = html;
         }
@@ -335,19 +397,17 @@
         function renderSemantics() {
             let html = '<div class="semantic-grid">';
             for (const [section, colors] of Object.entries(semantics)) {
-                html += `<div class="semantic-section">
-                    <div class="semantic-section-title">${section}</div>`;
+                html += '<div class="semantic-section">';
+                html += '<div class="semantic-section-title">' + section + '</div>';
                 for (const [role, color] of Object.entries(colors)) {
-                    html += `
-                        <div class="semantic-item">
-                            <div class="semantic-color-box" style="background-color: ${color};"></div>
-                            <div class="semantic-info">
-                                <div class="semantic-name">${role}</div>
-                                <div class="semantic-code">${color}</div>
-                            </div>
-                        </div>`;
+                    html += '<div class="semantic-item">';
+                    html += '<div class="semantic-color-box" style="background-color: ' + color + ';"></div>';
+                    html += '<div class="semantic-info">';
+                    html += '<div class="semantic-name">' + role + '</div>';
+                    html += '<div class="semantic-code">' + color + '</div>';
+                    html += '</div></div>';
                 }
-                html += `</div>`;
+                html += '</div>';
             }
             html += '</div>';
             document.getElementById('semantics-container').innerHTML = html;
@@ -358,15 +418,55 @@
             let html = '';
             for (const [name, colors] of Object.entries(sequences)) {
                 const displayName = name.replace(/_/g, ' ').toUpperCase();
-                html += `<div class="sequence-container">
-                    <div class="sequence-title">${displayName}</div>
-                    <div class="sequence-bar">`;
+                html += '<div class="sequence-container">';
+                html += '<div class="sequence-title">' + displayName + '</div>';
+                html += '<div class="sequence-bar">';
                 colors.forEach(color => {
-                    html += `<div class="sequence-segment" style="background-color: ${color};" data-hex="${color}"></div>`;
+                    html += '<div class="sequence-segment" style="background-color: ' + color + ';" data-hex="' + color + '"></div>';
                 });
-                html += `</div></div>`;
+                html += '</div></div>';
             }
             document.getElementById('sequences-container').innerHTML = html;
+        }
+        
+        // Renderizza font
+        function renderFonts() {
+            let html = '<div class="fonts-grid">';
+            
+            // Famiglie di font
+            html += '<div class="font-section">';
+            html += '<div class="font-section-title">Families</div>';
+            fonts.families.forEach(family => {
+                html += '<div class="font-item">';
+                html += '<div class="font-name">' + family + '</div>';
+                html += '<div class="font-code">family: "' + family + '"</div>';
+                html += '</div>';
+            });
+            html += '</div>';
+            
+            // Dimensioni
+            html += '<div class="font-section">';
+            html += '<div class="font-section-title">Sizes</div>';
+            fonts.sizes.forEach(size => {
+                html += '<div class="font-item">';
+                html += '<div class="font-name">' + size + '</div>';
+                html += '<div class="font-code">size: ' + size + '</div>';
+                html += '</div>';
+            });
+            html += '</div>';
+            
+            // Pesi
+            html += '<div class="font-section">';
+            html += '<div class="font-section-title">Weights</div>';
+            fonts.weights.forEach(weight => {
+                html += '<div class="font-item">';
+                html += '<div class="font-name">' + weight + '</div>';
+                html += '<div class="font-code">weight: ' + weight + '</div>';
+                html += '</div>';
+            });
+            html += '</div></div>';
+            
+            document.getElementById('fonts-container').innerHTML = html;
         }
         
         // Imposta timestamp
@@ -386,6 +486,7 @@
         renderPalettes();
         renderSemantics();
         renderSequences();
+        renderFonts();
         updateTimestamp();
     </script>
 </body>
