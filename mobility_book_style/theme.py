@@ -81,15 +81,15 @@ def get_color(role: SemanticRole, section: str = "brand") -> str:
     """
     # Mapping rapido per i casi d'uso più comuni
     shortcuts = {
-        "primary": token.brand.primary,
-        "accent": token.brand.accent,
-        "text_primary": token.text.primary,
-        "text_secondary": token.text.secondary,
-        "link": token.text.link,
-        "exercise": token.intent.exercise,
-        "warning": token.intent.warning,
-        "definition": token.intent.definition,
-        "curiosity": token.intent.curiosity,
+        "primary": token.color.brand.primary,
+        "accent": token.color.brand.accent,
+        "text_primary": token.color.text.primary,
+        "text_secondary": token.color.text.secondary,
+        "link": token.color.text.link,
+        "exercise": token.color.intent.exercise,
+        "warning": token.color.intent.warning,
+        "definition": token.color.intent.definition,
+        "curiosity": token.color.intent.curiosity,
     }
     
     # Se il ruolo è nelle scorciatoie, lo ritorniamo, altrimenti proviamo a navigare
@@ -99,14 +99,14 @@ def get_color(role: SemanticRole, section: str = "brand") -> str:
     
     # Fallback generico
     try:
-        section_node = getattr(token, section)
+        section_node = getattr(token.color, section)
         role_node = getattr(section_node, role)
         val = role_node.value if hasattr(role_node, 'value') else role_node
         return val
     except AttributeError:
         raise ValueError(f"Colore semantico {section}.{role} non trovato.")
 
-def get_font_props(family: FontType = "sans", size: str = "m", weight: str = "regular") -> Dict[str, str]:
+def get_font_props(family: FontType = "sans", size: str = "m", weight: str = "regular") -> Dict[str, Union[str, int]]:
     """
     Restituisce un dizionario di proprietà font pronto per essere passato a matplotlib
     o usato come kwargs.
@@ -117,21 +117,33 @@ def get_font_props(family: FontType = "sans", size: str = "m", weight: str = "re
         weight: Peso (regular, medium, bold)
     
     Returns:
-        Dizionario con chiavi 'family', 'size', 'weight'
+        Dizionario con chiavi 'family', 'size', 'weight'.
+        La chiave 'size' contiene un numero intero (punti), adatto per matplotlib.
     
     Esempio:
         >>> title_font = get_font_props(size='xl', weight='bold')
-        >>> # {'family': 'Inter...', 'size': '12pt', 'weight': '700'}
+        >>> # {'family': 'Inter...', 'size': 12, 'weight': '700'}
     """
     try:
         family_val = getattr(token.font.family, family)
         size_val = getattr(token.font.size, size)
         weight_val = getattr(token.font.weight, weight)
         
+        # Estrai i valori raw
+        family_str = family_val.value if hasattr(family_val, 'value') else family_val
+        size_str = size_val.value if hasattr(size_val, 'value') else size_val
+        weight_str = weight_val.value if hasattr(weight_val, 'value') else weight_val
+        
+        # Converti size da "12pt" a numero intero
+        if isinstance(size_str, str) and size_str.endswith('pt'):
+            size_num = int(size_str[:-2])  # rimuovi "pt" e converti a int
+        else:
+            size_num = int(size_str) if size_str else 10
+        
         return {
-            "family": family_val.value if hasattr(family_val, 'value') else family_val,
-            "size": size_val.value if hasattr(size_val, 'value') else size_val,
-            "weight": weight_val.value if hasattr(weight_val, 'value') else weight_val,
+            "family": family_str,
+            "size": size_num,
+            "weight": weight_str,
         }
     except AttributeError as e:
         raise ValueError(f"Font prop non trovato (family={family}, size={size}, weight={weight}): {e}")
@@ -189,10 +201,10 @@ def list_semantic_keys() -> Dict[str, List[str]]:
     raggruppate per sezione (brand, intent, text).
     """
     return {
-        "brand": list(token.brand.keys()),
-        "intent": list(token.intent.keys()),
-        "text": list(token.text.keys()),
-        "background": list(token.background.keys())
+        "brand": list(token.color.brand.keys()),
+        "intent": list(token.color.intent.keys()),
+        "text": list(token.color.text.keys()),
+        "background": list(token.color.background.keys())
     }
 
 def list_chart_schemes() -> Dict[str, List[str]]:
