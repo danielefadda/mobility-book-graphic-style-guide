@@ -24,8 +24,12 @@ def _register_fonts_once() -> int:
     if not fonts_dir.exists():
         return 0
 
+    # Registra solo i font statici Inter 18pt (esclude i Variable Font, noti per problemi in Matplotlib)
     registered = 0
-    for font_path in fonts_dir.glob("*.ttf"):
+    for font_path in fonts_dir.glob("Inter_18pt-*.ttf"):
+        name = font_path.name.lower()
+        if "variablefont" in name:
+            continue
         try:
             fm.fontManager.addfont(str(font_path))
             registered += 1

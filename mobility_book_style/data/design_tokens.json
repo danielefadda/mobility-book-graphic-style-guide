@@ -252,7 +252,7 @@
 
   "font": {
     "family": {
-      "sans": { "value": "Inter, sans-serif", "type": "fontFamily" },
+      "sans": { "value": "Inter 18pt, sans-serif", "type": "fontFamily" },
       "mono": { "value": "'Fira Code', monospace", "type": "fontFamily" }
     },
     "weight": {

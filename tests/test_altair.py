@@ -66,6 +66,19 @@ def test_altair_theme_config():
 
         # Verifica che i colori siano stati impostati
         assert theme["config"]["background"].upper() == "#FFFFFF"
-        assert "Inter" in theme["config"]["font"]
+        assert "Inter 18pt" in theme["config"]["font"]
     else:
         pytest.skip("Altair non installato")
+
+
+def test_altair_font_css_inline():
+    """Verifica che il CSS inline includa Inter 18pt."""
+    import mobility_book_style.altair as alt_module
+
+    css = alt_module.get_altair_font_css()
+    assert "Inter 18pt" in css
+    assert "@font-face" in css
+
+    embed_opts = alt_module.altair_embed_options_with_inter()
+    assert "defaultStyle" in embed_opts
+    assert "Inter 18pt" in embed_opts["defaultStyle"]

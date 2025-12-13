@@ -4,28 +4,26 @@ Questa cartella contiene i font **Inter** utilizzati dalla libreria Mobility Boo
 
 ## Font Inclusi
 
-- `Inter-VariableFont_opsz,wght.ttf` - Font variabile (Regular, tutti i pesi)
-- `Inter-Italic-VariableFont_opsz,wght.ttf` - Font variabile Italic
-- `OFL.txt` - Open Font License
+Solo variante `Inter_18pt-*.ttf` (tutti i pesi e stili), più `OFL.txt`.
 
 ## Caratteristiche
 
-I font Inter sono **font variabili** moderni che supportano:
-- **Peso variabile**: da Thin (100) a Black (900)
-- **Optical sizing**: ottimizzazione automatica per diverse dimensioni
-- Dimensione ridotta (2 file invece di 18)
-- Rendering ottimale su tutti i dispositivi
+I font Inter statici garantiscono piena compatibilità con Matplotlib e rendono
+correttamente i pesi (es. Bold) senza problemi legati ai Variable Fonts.
+
+La libreria usa **Inter 18pt** come font family predefinito, ottimale per grafici
+e visualizzazioni a dimensioni standard.
 
 ## Registrazione Automatica
 
-I font vengono **registrati automaticamente** in Matplotlib quando importi la libreria:
+I font vengono **registrati automaticamente** in Matplotlib quando importi la libreria (solo statici):
 
 ```python
 import mobility_book_style as mbs
-# I font Inter sono ora disponibili in Matplotlib!
+	# I font Inter sono ora disponibili in Matplotlib!
 
-mbs.apply_matplotlib_theme()
-# Il tema usa automaticamente Inter
+	mbs.apply_matplotlib_theme()
+	# Il tema usa automaticamente "Inter 18pt"
 ```
 
 ## Licenza
@@ -41,10 +39,10 @@ Puoi:
 
 ## Font Fallback
 
-Se Inter non è disponibile, il tema usa automaticamente il font stack:
+Se Inter 18pt non è disponibile, il tema usa automaticamente il font stack:
 
 ```
-Inter → IBM Plex Sans → DejaVu Sans → Arial → sans-serif
+Inter 18pt → sans-serif
 ```
 
 ## Verifica Disponibilità
@@ -56,21 +54,21 @@ import matplotlib.font_manager as fm
 
 inter_fonts = [f.name for f in fm.fontManager.ttflist if 'Inter' in f.name]
 print(f"Font Inter disponibili: {len(inter_fonts)}")
+# Dovresti vedere ~54 font (Inter 18pt, 24pt, 28pt con tutti i pesi)
 ```
 
 ## Dimensioni File
 
-- `Inter-VariableFont_opsz,wght.ttf`: ~855 KB
-- `Inter-Italic-VariableFont_opsz,wght.ttf`: ~884 KB
-- **Totale**: ~1.7 MB
+- 54 font statici totali (18pt, 24pt, 28pt × 9 pesi × 2 stili)
+- **Totale**: ~9-10 MB
 
-(Molto più leggero rispetto ai 18 file statici che occuperebbero ~5-6 MB)
+Nota: Più pesante dei variable fonts (~1.7 MB), ma garantisce compatibilità
+con Matplotlib e rendering corretto dei pesi.
 
 ## Supporto Browser/Software
 
-I font variabili sono supportati da:
-- ✅ Tutti i browser moderni (Chrome, Firefox, Safari, Edge)
 - ✅ Matplotlib (tramite FreeType)
+- ✅ Tutti i browser moderni (con CSS @font-face)
 - ✅ Adobe Creative Suite (CC 2018+)
 - ✅ Microsoft Office (2016+)
 - ✅ Figma, Sketch, XD

@@ -13,7 +13,7 @@ def test_apply_matplotlib_theme():
 
     # Verifica che i parametri siano stati impostati
     assert mpl.rcParams["font.family"] == ["sans-serif"]
-    assert "Inter" in mpl.rcParams["font.sans-serif"]
+    assert "Inter 18pt" in mpl.rcParams["font.sans-serif"]
 
     # Verifica colori
     assert mpl.rcParams["figure.facecolor"].upper() == "#FFFFFF"
@@ -62,7 +62,7 @@ def test_theme_persistence():
     mbs.apply_matplotlib_theme()
 
     # Verifica che il tema sia applicato
-    assert "Inter" in mpl.rcParams["font.sans-serif"]
+    assert "Inter 18pt" in mpl.rcParams["font.sans-serif"]
 
     # Crea un nuovo plot (dovrebbe usare il tema)
     import matplotlib.pyplot as plt
@@ -71,7 +71,7 @@ def test_theme_persistence():
     ax.plot([1, 2, 3], [1, 2, 3])
 
     # Il tema dovrebbe essere ancora attivo
-    assert "Inter" in mpl.rcParams["font.sans-serif"]
+    assert "Inter 18pt" in mpl.rcParams["font.sans-serif"]
 
     # Cleanup
     plt.close(fig)

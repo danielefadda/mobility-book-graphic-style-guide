@@ -20,6 +20,9 @@ Note:
     pip install mobility-book-style[altair]
 """
 
+from pathlib import Path
+import base64
+
 try:
     import altair as alt
 
@@ -34,6 +37,54 @@ from .utils import to_px, palette_from_numeric_keys
 
 # Esponi le scale personalizzate a livello di modulo
 _sequential_scales = {}
+_FONTS_DIR = Path(__file__).parent / "fonts"
+
+
+def _encode_font_as_data_uri(font_path: Path) -> str:
+    raw = font_path.read_bytes()
+    b64 = base64.b64encode(raw).decode("ascii")
+    return f"data:font/ttf;base64,{b64}"
+
+
+def get_altair_font_css() -> str:
+    """Restituisce il CSS @font-face per Inter 18pt (regular/italic/bold/bold italic).
+
+    Il CSS usa data URI per incorporare i TTF direttamente nell'HTML esportato.
+    """
+
+    faces = [
+        ("Inter 18pt", "normal", "400", "Inter_18pt-Regular.ttf"),
+        ("Inter 18pt", "italic", "400", "Inter_18pt-Italic.ttf"),
+        ("Inter 18pt", "normal", "700", "Inter_18pt-Bold.ttf"),
+        ("Inter 18pt", "italic", "700", "Inter_18pt-BoldItalic.ttf"),
+    ]
+
+    blocks: list[str] = []
+    for family, style, weight, filename in faces:
+        font_path = _FONTS_DIR / filename
+        if not font_path.exists():
+            continue
+        data_uri = _encode_font_as_data_uri(font_path)
+        blocks.append(
+            "@font-face {"
+            f" font-family: '{family}';"
+            f" font-style: {style};"
+            f" font-weight: {weight};"
+            f" src: url({data_uri}) format('truetype');"
+            " }"
+        )
+
+    return "\n".join(blocks)
+
+
+def altair_embed_options_with_inter() -> dict:
+    """Restituisce le embed options Altair con Inter 18pt incorporato via CSS.
+
+    Usa in chart.save(..., embed_options=altair_embed_options_with_inter()).
+    """
+
+    css = get_altair_font_css()
+    return {"defaultStyle": css} if css else {}
 
 
 def _build_altair_theme():
@@ -212,6 +263,17 @@ def enable_altair_theme():
     @alt.theme.register("mobility_theme", enable=True)
     def custom_theme():
         return _build_altair_theme()
+
+    # Imposta embed options di default con font Inter 18pt incorporato via @font-face.
+    # In questo modo i grafici inline e gli export HTML includono il font senza
+    # codice aggiuntivo nel notebook.
+    try:
+        css_opts = altair_embed_options_with_inter()
+        if css_opts:
+            alt.renderers.set_embed_options(**css_opts)
+    except Exception:
+        # Non bloccare l'attivazione del tema se l'embed option fallisce
+        pass
 
 
 def disable_altair_theme():

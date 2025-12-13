@@ -108,7 +108,7 @@ chart = alt.Chart(data).mark_bar().encode(
     height=400
 )
 
-chart.save('chart.html')
+chart.save('chart.html')  # il tema incorpora già Inter 18pt via @font-face
 ```
 
 ### Tabelle Matplotlib
