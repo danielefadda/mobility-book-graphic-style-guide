@@ -6,6 +6,7 @@ requirements.txt
 docs/README.md
 docs/Urban Institute.xml
 docs/index.html
+docs/theme-visualization.html
 docs/css/bootstrap.css
 docs/css/bootstrap.min.css
 docs/css/color-column.css
@@ -23,11 +24,14 @@ docs/js/less.min.js
 examples/demo_advanced.ipynb
 examples/demo_heatmap.ipynb
 examples/demo_new_api.ipynb
+examples/helper.ipynb
 mobility_book_style/__init__.py
 mobility_book_style/_tokens.py
 mobility_book_style/altair.py
 mobility_book_style/export.py
 mobility_book_style/matplotlib.py
+mobility_book_style/theme.py
+mobility_book_style/theme_visualizer.py
 mobility_book_style/utils.py
 mobility_book_style.egg-info/PKG-INFO
 mobility_book_style.egg-info/SOURCES.txt
